@@ -1,16 +1,23 @@
-from rich.console import Console
-from rich.panel import Panel
-from rich import print
+"""
+PROJECT SARATHI
 
-console = Console()
+Application entry point.
+"""
 
-console.print(
-    Panel.fit(
-        "[bold green]PROJECT SARATHI[/bold green]\n"
-        "National Circular Bioeconomy Infrastructure\n"
-        "Dossier Generation Platform",
-        title="Version 1.0",
-    )
-)
+from config.settings import settings
 
-print("[cyan]System Boot Successful[/cyan]")
+
+def main():
+    print("=" * 50)
+    print(settings.APP_NAME)
+    print("=" * 50)
+    print(f"Version      : {settings.VERSION}")
+    print(f"Environment  : {settings.ENVIRONMENT}")
+    print(f"Project Root : {settings.PROJECT_ROOT}")
+    print(f"Data Folder  : {settings.DATA_DIR}")
+    print(f"Log Folder   : {settings.LOG_DIR}")
+    print("=" * 50)
+
+
+if __name__ == "__main__":
+    main()

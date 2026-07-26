@@ -1,0 +1,15 @@
+"""
+PROJECT SARATHI
+
+Application constants.
+"""
+
+APP_NAME = "PROJECT SARATHI"
+
+VERSION = "0.1.0"
+
+AUTHOR = "PROJECT SARATHI TEAM"
+
+DEFAULT_LOG_LEVEL = "INFO"
+
+ENVIRONMENT = "development"
