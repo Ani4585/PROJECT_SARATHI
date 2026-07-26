@@ -12,7 +12,10 @@ Version:
 
 from __future__ import annotations
 
-from config.settings import settings
+from logging import Logger
+
+from config.settings import settings, Settings
+
 from src.lifecycle import LifecycleManager
 from src.utils.logger import logger
 
@@ -32,7 +35,12 @@ def bootstrap_container() -> ServiceContainer:
 
     container = ServiceContainer()
 
-    # Register existing singleton instances.
+
+    # -------------------------------------------------
+    # Name-based registrations
+    # Existing compatibility layer
+    # -------------------------------------------------
+
     container.register_instance(
         "settings",
         settings,
@@ -43,11 +51,42 @@ def bootstrap_container() -> ServiceContainer:
         logger,
     )
 
-    lifecycle = LifecycleManager(logger)
+
+    # -------------------------------------------------
+    # Type-based registrations
+    # New enterprise DI layer
+    # -------------------------------------------------
+
+    container.register_type(
+        Settings,
+        settings,
+    )
+
+    container.register_type(
+        Logger,
+        logger,
+    )
+
+
+    # -------------------------------------------------
+    # Lifecycle service
+    # -------------------------------------------------
+
+    lifecycle = LifecycleManager(
+        logger
+    )
+
 
     container.register_instance(
         "lifecycle",
         lifecycle,
     )
+
+
+    container.register_type(
+        LifecycleManager,
+        lifecycle,
+    )
+
 
     return container

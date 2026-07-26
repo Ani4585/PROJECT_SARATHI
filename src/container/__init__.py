@@ -3,7 +3,7 @@ PROJECT SARATHI
 
 Dependency Injection Container Package.
 """
-
+from .resolver import DependencyResolver
 from .container import ServiceContainer
 from .exceptions import (
     ContainerError,
@@ -23,6 +23,7 @@ __all__ = [
     "ServiceRegistry",
     "ServiceDefinition",
     "FactoryProvider",
+    "DependencyResolver",
     "ServiceLifetime",
     "ContainerError",
     "ServiceNotFoundError",

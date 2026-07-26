@@ -7,10 +7,7 @@ Dependency Injection Container.
 from __future__ import annotations
 
 from threading import RLock
-from typing import Any, TypeAlias
-from collections.abc import Callable
-
-ServiceKey: TypeAlias = str | type
+from typing import Any
 
 from .lifetimes import ServiceLifetime
 from .provider import FactoryProvider
@@ -22,15 +19,23 @@ class ServiceContainer:
     Central dependency injection container.
     """
 
+
     def __init__(self) -> None:
 
         self._registry = ServiceRegistry()
 
+        # Type based dependency registrations
+        self._typed_services: dict[type, Any] = {}
+
         self._lock = RLock()
+
+        self._resolver = None
+
+
 
     def register_instance(
         self,
-        key: ServiceKey,
+        name: str,
         instance: Any,
     ) -> None:
         """
@@ -38,19 +43,48 @@ class ServiceContainer:
         """
 
         self._registry.register(
-            name=str(key),
+            name=name,
             provider=lambda: instance,
             lifetime=ServiceLifetime.SINGLETON,
         )
 
-        definition = self._registry.get_definition(str(key))
+
+        definition = (
+            self._registry
+            .get_definition(name)
+        )
+
 
         definition.instance = instance
 
+
+
+    def register_type(
+        self,
+        service_type: type,
+        instance: Any,
+    ) -> None:
+        """
+        Register a service by type.
+
+        Example:
+
+            Logger -> logger instance
+            Settings -> settings instance
+
+        Enables type based injection.
+        """
+
+        self._typed_services[
+            service_type
+        ] = instance
+
+
+
     def register_factory(
         self,
-        key: ServiceKey,
-        factory : Callable[..., Any],
+        name: str,
+        factory,
         lifetime: ServiceLifetime = ServiceLifetime.SINGLETON,
     ) -> None:
         """
@@ -59,23 +93,33 @@ class ServiceContainer:
 
         provider = FactoryProvider(factory)
 
+
         self._registry.register(
-            name=str(key),
+            name=name,
             provider=provider,
             lifetime=lifetime,
         )
 
+
+
     def resolve(
         self,
-        key: ServiceKey,
+        name: str,
     ) -> Any:
         """
-        Resolve a service.
+        Resolve a service by name.
         """
 
-        definition = self._registry.get_definition(str(key))
+        definition = (
+            self._registry
+            .get_definition(name)
+        )
 
-        if definition.lifetime == ServiceLifetime.SINGLETON:
+
+        if (
+            definition.lifetime
+            == ServiceLifetime.SINGLETON
+        ):
 
             with self._lock:
 
@@ -88,28 +132,107 @@ class ServiceContainer:
                         definition.instance = (
                             definition.provider.create()
                         )
+
                     else:
                         definition.instance = (
                             definition.provider()
                         )
 
+
                 return definition.instance
+
+
 
         if isinstance(
             definition.provider,
             FactoryProvider,
         ):
-            return definition.provider.create()
+
+            return (
+                definition.provider.create()
+            )
+
 
         return definition.provider()
 
+
+
+    def resolve_type(
+        self,
+        service_type: type,
+    ) -> Any:
+        """
+        Resolve a service using its type.
+        """
+
+        if service_type not in self._typed_services:
+
+            raise KeyError(
+                f"Service type "
+                f"{service_type.__name__} "
+                "is not registered."
+            )
+
+
+        return self._typed_services[
+            service_type
+        ]
+
+
+
+    def build(
+        self,
+        cls: type,
+    ) -> Any:
+        """
+        Build an object using dependency injection.
+        """
+
+        if self._resolver is None:
+
+            from .resolver import DependencyResolver
+
+            self._resolver = DependencyResolver(
+                self
+            )
+
+
+        return self._resolver.build(
+            cls
+        )
+
+
+
     def has(
         self,
-        key: ServiceKey,
+        name: str,
     ) -> bool:
 
-        return self._registry.is_registered(str(key))
+        return (
+            self._registry
+            .is_registered(name)
+        )
 
-    def list_services(self)  -> list[str]:
 
-        return self._registry.list_services()
+
+    def has_type(
+        self,
+        service_type: type,
+    ) -> bool:
+        """
+        Check if type registration exists.
+        """
+
+        return (
+            service_type
+            in self._typed_services
+        )
+
+
+
+    def list_services(self):
+
+        return (
+            self._registry
+            .list_services()
+        )
