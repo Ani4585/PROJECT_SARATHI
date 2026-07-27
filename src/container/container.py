@@ -9,16 +9,17 @@ from __future__ import annotations
 from threading import RLock
 from typing import Any
 
+from .descriptor import ServiceDescriptor
 from .lifetimes import ServiceLifetime
 from .provider import FactoryProvider
 from .registry import ServiceRegistry
+from src.graph import GraphRecorder
 
 
 class ServiceContainer:
     """
     Central dependency injection container.
     """
-
 
     def __init__(self) -> None:
 
@@ -27,11 +28,19 @@ class ServiceContainer:
         # Type based dependency registrations
         self._typed_services: dict[type, Any] = {}
 
-        self._lock = RLock()
+        # Metadata describing registered services
+        self._service_descriptors: dict[
+            type,
+            ServiceDescriptor,
+        ] = {}
 
+        self._lock = RLock()
+        self._graph_recorder = GraphRecorder()
         self._resolver = None
 
-
+    # --------------------------------------------------
+    # Registration
+    # --------------------------------------------------
 
     def register_instance(
         self,
@@ -48,16 +57,12 @@ class ServiceContainer:
             lifetime=ServiceLifetime.SINGLETON,
         )
 
-
         definition = (
             self._registry
             .get_definition(name)
         )
 
-
         definition.instance = instance
-
-
 
     def register_type(
         self,
@@ -67,19 +72,26 @@ class ServiceContainer:
         """
         Register a service by type.
 
-        Example:
-
-            Logger -> logger instance
-            Settings -> settings instance
-
-        Enables type based injection.
+        Maintains backward compatibility while
+        creating a ServiceDescriptor.
         """
 
+        # Existing behaviour
         self._typed_services[
             service_type
         ] = instance
 
+        # Metadata for future automatic construction
+        descriptor = ServiceDescriptor(
+            service_type=service_type,
+            implementation_type=type(instance),
+            lifetime=ServiceLifetime.SINGLETON,
+            instance=instance,
+        )
 
+        self._service_descriptors[
+            service_type
+        ] = descriptor
 
     def register_factory(
         self,
@@ -93,14 +105,51 @@ class ServiceContainer:
 
         provider = FactoryProvider(factory)
 
-
         self._registry.register(
             name=name,
             provider=provider,
             lifetime=lifetime,
         )
 
+    # --------------------------------------------------
+    # Descriptor API
+    # --------------------------------------------------
 
+    def get_descriptor(
+        self,
+        service_type: type,
+    ) -> ServiceDescriptor | None:
+        """
+        Return the descriptor for a service.
+        """
+
+        return self._service_descriptors.get(
+            service_type
+        )
+
+    def cache_constructor_dependencies(
+        self,
+        service_type: type,
+        dependencies: list[type],
+    ) -> None:
+        """
+        Cache constructor dependency metadata.
+        """
+
+        descriptor = self.get_descriptor(
+            service_type
+        )
+
+        if descriptor is None:
+            return
+
+        descriptor.constructor_dependencies = (
+            dependencies
+        )
+
+    # --------------------------------------------------
+    # Resolution
+    # --------------------------------------------------
 
     def resolve(
         self,
@@ -114,7 +163,6 @@ class ServiceContainer:
             self._registry
             .get_definition(name)
         )
-
 
         if (
             definition.lifetime
@@ -138,10 +186,7 @@ class ServiceContainer:
                             definition.provider()
                         )
 
-
                 return definition.instance
-
-
 
         if isinstance(
             definition.provider,
@@ -152,10 +197,7 @@ class ServiceContainer:
                 definition.provider.create()
             )
 
-
         return definition.provider()
-
-
 
     def resolve_type(
         self,
@@ -173,12 +215,26 @@ class ServiceContainer:
                 "is not registered."
             )
 
-
         return self._typed_services[
             service_type
         ]
 
+        def is_registered_type(
+        self,
+        service_type: type,
+        ) -> bool:
+            """
+        Check whether a service type has
+        already been registered.
+            """
 
+        return (
+            service_type
+            in self._typed_services
+        )
+    # --------------------------------------------------
+    # Object Construction
+    # --------------------------------------------------
 
     def build(
         self,
@@ -196,12 +252,13 @@ class ServiceContainer:
                 self
             )
 
-
         return self._resolver.build(
             cls
         )
 
-
+    # --------------------------------------------------
+    # Queries
+    # --------------------------------------------------
 
     def has(
         self,
@@ -212,8 +269,6 @@ class ServiceContainer:
             self._registry
             .is_registered(name)
         )
-
-
 
     def has_type(
         self,
@@ -227,8 +282,6 @@ class ServiceContainer:
             service_type
             in self._typed_services
         )
-
-
 
     def list_services(self):
 

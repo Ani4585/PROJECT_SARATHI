@@ -1,13 +1,16 @@
 from src.container import bootstrap_container
+from logging import Logger
+from config.settings import Settings
 
 
 class ExampleService:
 
     def __init__(
-        self,
-        logger,
-        settings,
-    ):
+    self,
+    logger: Logger,
+    settings: Settings,
+):
+
         self.logger = logger
         self.settings = settings
 

@@ -11,7 +11,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from src.graph import GraphRecorder
 from src.reflection import ConstructorInspector
 
 
@@ -27,40 +26,32 @@ class DependencyResolver:
 
         self._container = container
 
-        # Records dependency relationships
-        # while objects are being constructed.
-        self._graph_recorder = GraphRecorder()
-
-
-    @property
-    def graph(self):
-        """
-        Return the recorded dependency graph.
-        """
-
-        return self._graph_recorder.graph
-
-
     def build(
         self,
         cls: type,
     ) -> Any:
         """
         Build an object using constructor injection.
-
-        Strategy:
-
-        1. Prefer type-based resolution.
-        2. Fall back to name-based resolution.
         """
 
-        self._graph_recorder.begin(
-            cls
+        descriptor = (
+            self._container.get_descriptor(cls)
         )
 
-        try:
+        # -----------------------------
+        # Try cached constructor metadata
+        # -----------------------------
 
-            dependencies = []
+        if (
+            descriptor is not None
+            and descriptor.constructor_cached
+        ):
+
+            dependency_types = (
+                descriptor.constructor_dependencies
+            )
+
+        else:
 
             try:
 
@@ -69,13 +60,10 @@ class DependencyResolver:
                     .get_dependency_types(cls)
                 )
 
-                for dependency_type in dependency_types:
-
-                    dependencies.append(
-                        self._container.resolve_type(
-                            dependency_type
-                        )
-                    )
+                self._container.cache_constructor_dependencies(
+                    cls,
+                    dependency_types,
+                )
 
             except TypeError:
 
@@ -84,16 +72,72 @@ class DependencyResolver:
                     .get_dependencies(cls)
                 )
 
+                dependencies = []
+
                 for name in dependency_names:
 
                     dependencies.append(
                         self._container.resolve(name)
                     )
 
-            return cls(
-                *dependencies
+                instance = cls(
+                    *dependencies
+                )
+
+                if not self._container.has_type(
+                    cls
+                ):
+                    self._container.register_type(
+                        cls,
+                        instance,
+                    )
+
+                return instance
+
+        dependencies = []
+
+        for dependency_type in dependency_types:
+
+            if self._container.has_type(
+                dependency_type
+            ):
+
+                dependency = (
+                    self._container.resolve_type(
+                        dependency_type
+                    )
+                )
+
+            else:
+
+                dependency = self.build(
+                    dependency_type
+                )
+
+            dependencies.append(
+                dependency
             )
 
-        finally:
+        instance = cls(
+            *dependencies
+        )
 
-            self._graph_recorder.end()
+        if not self._container.has_type(
+            cls
+        ):
+            self._container.register_type(
+                cls,
+                instance,
+            )
+
+        descriptor = (
+            self._container.get_descriptor(
+                cls
+            )
+        )
+
+        if descriptor is not None:
+
+            descriptor.build_count += 1
+
+        return instance
