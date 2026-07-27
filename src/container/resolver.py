@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from src.graph import GraphRecorder
 from src.reflection import ConstructorInspector
 
 
@@ -26,6 +27,19 @@ class DependencyResolver:
 
         self._container = container
 
+        # Records dependency relationships
+        # while objects are being constructed.
+        self._graph_recorder = GraphRecorder()
+
+
+    @property
+    def graph(self):
+        """
+        Return the recorded dependency graph.
+        """
+
+        return self._graph_recorder.graph
+
 
     def build(
         self,
@@ -40,38 +54,46 @@ class DependencyResolver:
         2. Fall back to name-based resolution.
         """
 
-        dependencies = []
+        self._graph_recorder.begin(
+            cls
+        )
 
         try:
 
-            dependency_types = (
-                ConstructorInspector
-                .get_dependency_types(cls)
-            )
+            dependencies = []
 
-            for dependency_type in dependency_types:
+            try:
 
-                dependencies.append(
-                    self._container.resolve_type(
-                        dependency_type
+                dependency_types = (
+                    ConstructorInspector
+                    .get_dependency_types(cls)
+                )
+
+                for dependency_type in dependency_types:
+
+                    dependencies.append(
+                        self._container.resolve_type(
+                            dependency_type
+                        )
                     )
+
+            except TypeError:
+
+                dependency_names = (
+                    ConstructorInspector
+                    .get_dependencies(cls)
                 )
 
+                for name in dependency_names:
 
-        except TypeError:
+                    dependencies.append(
+                        self._container.resolve(name)
+                    )
 
-            dependency_names = (
-                ConstructorInspector
-                .get_dependencies(cls)
+            return cls(
+                *dependencies
             )
 
-            for name in dependency_names:
+        finally:
 
-                dependencies.append(
-                    self._container.resolve(name)
-                )
-
-
-        return cls(
-            *dependencies
-        )
+            self._graph_recorder.end()
