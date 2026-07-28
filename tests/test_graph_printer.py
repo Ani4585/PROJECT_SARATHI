@@ -60,3 +60,4 @@ def test_graph_printer():
     assert "ServiceA" in output
     assert "ServiceB" in output
     assert "ServiceC" in output
+    

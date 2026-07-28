@@ -1,0 +1,3116 @@
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\config\__init__.py
+================================================================================
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\config\constants.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Application constants.
+"""
+
+APP_NAME = "PROJECT SARATHI"
+
+VERSION = "0.1.0"
+
+AUTHOR = "PROJECT SARATHI TEAM"
+
+DEFAULT_LOG_LEVEL = "INFO"
+
+ENVIRONMENT = "development"
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\config\paths.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Centralised project path definitions.
+"""
+
+from pathlib import Path
+
+# Root directory of the project
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+# Core directories
+CONFIG_DIR = PROJECT_ROOT / "config"
+DATA_DIR = PROJECT_ROOT / "data"
+LOG_DIR = PROJECT_ROOT / "logs"
+SRC_DIR = PROJECT_ROOT / "src"
+TESTS_DIR = PROJECT_ROOT / "tests"
+DOCS_DIR = PROJECT_ROOT / "docs"
+
+# Create required directories if they do not already exist
+for directory in (
+    DATA_DIR,
+    LOG_DIR,
+):
+    directory.mkdir(parents=True, exist_ok=True)
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\config\settings.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Application settings.
+"""
+
+from config.constants import (
+    APP_NAME,
+    VERSION,
+    AUTHOR,
+    DEFAULT_LOG_LEVEL,
+    ENVIRONMENT,
+)
+
+from config.paths import (
+    PROJECT_ROOT,
+    DATA_DIR,
+    LOG_DIR,
+)
+
+
+class Settings:
+    """Central application settings."""
+
+    APP_NAME = APP_NAME
+    VERSION = VERSION
+    AUTHOR = AUTHOR
+
+    ENVIRONMENT = ENVIRONMENT
+    LOG_LEVEL = DEFAULT_LOG_LEVEL
+
+    PROJECT_ROOT = PROJECT_ROOT
+    DATA_DIR = DATA_DIR
+    LOG_DIR = LOG_DIR
+
+
+settings = Settings()
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\bootstrap.py
+================================================================================
+from pathlib import Path
+
+PROJECT_ROOT = Path.cwd()
+
+DIRECTORIES = [
+    "app",
+    "app/core",
+    "app/cli",
+    "app/config",
+    "app/builders",
+    "app/engines",
+    "app/generators",
+    "app/models",
+    "app/utils",
+    "app/services",
+    "app/database",
+    "app/assets",
+    "knowledge",
+    "knowledge/policy",
+    "knowledge/finance",
+    "knowledge/engineering",
+    "knowledge/feedstocks",
+    "knowledge/esg",
+    "knowledge/case_studies",
+    "knowledge/governance",
+    "knowledge/technology",
+    "datasets",
+    "templates",
+    "exports",
+    "output",
+    "figures",
+    "maps",
+    "reports",
+    "logs",
+    "tests",
+    "docs",
+]
+
+for directory in DIRECTORIES:
+    (PROJECT_ROOT / directory).mkdir(parents=True, exist_ok=True)
+
+print("PROJECT STRUCTURE CREATED SUCCESSFULLY")
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_application.py
+================================================================================
+from src.application.application import Application
+from src.application.context import ApplicationContext
+from src.container import bootstrap_container
+
+container = bootstrap_container()
+
+context = ApplicationContext(
+    settings=container.resolve("settings"),
+    logger=container.resolve("logger"),
+    container=container,
+    lifecycle=container.resolve("lifecycle"),
+)
+
+app = Application(context)
+
+print(app.health())
+
+print("Application test passed.")
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_bootstrap.py
+================================================================================
+from src.container import bootstrap_container
+
+
+container = bootstrap_container()
+
+logger = container.resolve("logger")
+
+settings = container.resolve("settings")
+
+lifecycle = container.resolve("lifecycle")
+
+print(type(logger).__name__)
+
+print(type(settings).__name__)
+
+print(type(lifecycle).__name__)
+
+print(container.list_services())
+
+print("Bootstrap test passed.")
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_builder.py
+================================================================================
+from src.application import ApplicationBuilder
+
+builder = ApplicationBuilder()
+
+app = builder.build()
+
+print(type(app).__name__)
+
+print(app.health())
+
+print("Builder test passed.")
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_constructor_injection.py
+================================================================================
+from src.container import bootstrap_container
+from logging import Logger
+from config.settings import Settings
+
+
+class ExampleService:
+
+    def __init__(
+    self,
+    logger: Logger,
+    settings: Settings,
+):
+
+        self.logger = logger
+        self.settings = settings
+
+
+container = bootstrap_container()
+
+service = container.build(
+    ExampleService
+)
+
+print(type(service).__name__)
+print(service.logger.__class__.__name__)
+print(service.settings.__class__.__name__)
+
+print("Constructor injection passed.")
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_container.py
+================================================================================
+from src.container import (
+    ServiceContainer,
+    ServiceLifetime,
+)
+
+
+container = ServiceContainer()
+
+container.register_instance(
+    "number",
+    42,
+)
+
+print(container.resolve("number"))
+
+container.register_factory(
+    "list",
+    list,
+    lifetime=ServiceLifetime.TRANSIENT,
+)
+
+a = container.resolve("list")
+
+b = container.resolve("list")
+
+print(a is b)
+
+print("Container tests passed.")
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_cycle_detector.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Cycle Detector Test Runner
+"""
+
+from tests.test_cycle_detector import (
+    test_cycle_detection,
+)
+
+
+def main():
+
+    test_cycle_detection()
+
+    print("PASS")
+
+
+if __name__ == "__main__":
+
+    main()
+    
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_graph.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Graph Test Runner
+"""
+
+from tests.test_graph import (
+    test_graph_creation,
+)
+
+
+def main():
+
+    test_graph_creation()
+
+    print("PASS")
+
+
+if __name__ == "__main__":
+
+    main()
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_graph_printer.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Graph Printer Test Runner
+"""
+
+from tests.test_graph_printer import (
+    test_graph_printer,
+)
+
+
+def main():
+
+    test_graph_printer()
+
+    print("PASS")
+
+
+if __name__ == "__main__":
+
+    main()
+    
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_lifecycle.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Lifecycle Manager Test
+"""
+
+from src.lifecycle import LifecycleManager
+from src.utils.logger import logger
+
+
+def main():
+    lifecycle = LifecycleManager(logger)
+
+    assert lifecycle.get_state() == "STOPPED"
+
+    lifecycle.start()
+    assert lifecycle.get_state() == "STARTING"
+
+    lifecycle.mark_running()
+    assert lifecycle.get_state() == "RUNNING"
+
+    lifecycle.stop()
+    assert lifecycle.get_state() == "STOPPED"
+
+    print("Lifecycle tests passed successfully.")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_reflection.py
+================================================================================
+from src.reflection import ConstructorInspector
+
+
+class Example:
+
+    def __init__(
+        self,
+        logger,
+        settings,
+        database,
+    ):
+        pass
+
+
+deps = ConstructorInspector.get_dependencies(
+    Example
+)
+
+print(deps)
+
+print("Reflection tests passed.")
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_reflection_types.py
+================================================================================
+from logging import Logger
+
+from config.settings import Settings
+
+from src.reflection import ConstructorInspector
+
+
+class Example:
+
+    def __init__(
+        self,
+        logger: Logger,
+        settings: Settings,
+    ):
+        pass
+
+
+types = ConstructorInspector.get_dependency_types(
+    Example
+)
+
+print(
+    [t.__name__ for t in types]
+)
+
+print("Reflection type inspection passed.")
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_registry.py
+================================================================================
+from src.container import ServiceRegistry
+
+registry = ServiceRegistry()
+
+registry.register(
+    "number",
+    lambda: 42,
+)
+
+print("Registered:", registry.list_services())
+
+definition = registry.get_definition("number")
+
+print("Lifetime:", definition.lifetime.value)
+
+print("Registry test passed.")
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\scripts\test_typed_injection.py
+================================================================================
+from logging import Logger
+
+from config.settings import Settings
+
+from src.container import bootstrap_container
+
+
+class TypedService:
+
+    def __init__(
+        self,
+        logger: Logger,
+        settings: Settings,
+    ):
+
+        self.logger = logger
+        self.settings = settings
+
+
+
+container = bootstrap_container()
+
+
+service = container.build(
+    TypedService
+)
+
+
+print(
+    type(service).__name__
+)
+
+print(
+    type(service.settings).__name__
+)
+
+print(
+    type(service.logger).__name__
+)
+
+
+print(
+    "Typed injection passed."
+)
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\application\__init__.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Application Framework
+"""
+
+from .application import Application
+from .builder import ApplicationBuilder
+from .context import ApplicationContext
+
+__all__ = [
+    "Application",
+    "ApplicationBuilder",
+    "ApplicationContext",
+]
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\application\application.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Application
+
+Central application object responsible for
+startup, runtime coordination and shutdown.
+"""
+
+from __future__ import annotations
+
+from .context import ApplicationContext
+
+
+class Application:
+    """
+    Central application object.
+
+    Responsibilities
+    ----------------
+    * Start the application
+    * Coordinate lifecycle
+    * Expose health information
+    * Shut down gracefully
+    """
+
+    def __init__(
+        self,
+        context: ApplicationContext,
+    ) -> None:
+
+        self._context = context
+
+    @property
+    def context(self) -> ApplicationContext:
+        """
+        Return the application context.
+        """
+
+        return self._context
+
+    def start(self) -> None:
+        """
+        Start the application.
+        """
+
+        lifecycle = self._context.lifecycle
+        logger = self._context.logger
+
+        lifecycle.start()
+        lifecycle.mark_running()
+
+        logger.info(
+            "Application object started successfully."
+        )
+
+    def stop(self) -> None:
+        """
+        Stop the application.
+        """
+
+        logger = self._context.logger
+
+        logger.info(
+            "Stopping application..."
+        )
+
+        self._context.lifecycle.stop()
+
+        logger.info(
+            "Application stopped successfully."
+        )
+
+    def health(self) -> dict[str, str]:
+        """
+        Return application health information.
+        """
+
+        return {
+            "application": self._context.settings.APP_NAME,
+            "version": self._context.settings.VERSION,
+            "environment": self._context.settings.ENVIRONMENT,
+            "status": self._context.lifecycle.get_state(),
+        }
+
+    def run(self) -> None:
+        """
+        Run the application.
+        """
+
+        self.start()
+
+        logger = self._context.logger
+
+        logger.info(
+            "Application is running."
+        )
+
+        logger.info(
+            "Health: %s",
+            self.health(),
+        )
+
+        self.stop()
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\application\builder.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Application Builder
+
+Responsible for constructing a fully initialized
+Application instance.
+"""
+
+from __future__ import annotations
+
+from src.container import bootstrap_container
+
+from .application import Application
+from .context import ApplicationContext
+
+
+class ApplicationBuilder:
+    """
+    Builds an Application instance.
+    """
+
+    def build(self) -> Application:
+        """
+        Build and return a fully configured application.
+        """
+
+        container = bootstrap_container()
+
+        context = ApplicationContext(
+            settings=container.resolve("settings"),
+            logger=container.resolve("logger"),
+            container=container,
+            lifecycle=container.resolve("lifecycle"),
+        )
+
+        return Application(context)
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\application\context.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Application Context
+
+Stores shared application services that are
+available throughout the lifetime of the application.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from config.settings import Settings
+from src.container import ServiceContainer
+from src.lifecycle import LifecycleManager
+
+
+@dataclass(slots=True)
+class ApplicationContext:
+    """
+    Shared runtime context for the application.
+
+    Attributes
+    ----------
+    settings
+        Application configuration.
+
+    logger
+        Central application logger.
+
+    container
+        Dependency injection container.
+
+    lifecycle
+        Application lifecycle manager.
+    """
+
+    settings: Settings
+    logger: object
+    container: ServiceContainer
+    lifecycle: LifecycleManager
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\container\__init__.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Injection Container Package.
+"""
+from .resolver import DependencyResolver
+from .container import ServiceContainer
+from .exceptions import (
+    ContainerError,
+    ServiceAlreadyRegisteredError,
+    ServiceNotFoundError,
+)
+from .lifetimes import ServiceLifetime
+from .provider import FactoryProvider
+from .registry import (
+    ServiceDefinition,
+    ServiceRegistry,
+)
+
+__all__ = [
+    "ServiceContainer",
+    "bootstrap_container",
+    "ServiceRegistry",
+    "ServiceDefinition",
+    "FactoryProvider",
+    "DependencyResolver",
+    "ServiceLifetime",
+    "ContainerError",
+    "ServiceNotFoundError",
+    "ServiceAlreadyRegisteredError",
+]
+from .bootstrap import bootstrap_container
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\container\bootstrap.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Bootstrap the Dependency Injection container.
+
+Author:
+    PROJECT SARATHI
+
+Version:
+    0.1.0
+"""
+
+from __future__ import annotations
+
+from logging import Logger
+
+from config.settings import settings, Settings
+
+from src.lifecycle import LifecycleManager
+from src.utils.logger import logger
+
+from .container import ServiceContainer
+
+
+def bootstrap_container() -> ServiceContainer:
+    """
+    Create and initialize the application's
+    dependency injection container.
+
+    Returns
+    -------
+    ServiceContainer
+        Fully initialized service container.
+    """
+
+    container = ServiceContainer()
+
+
+    # -------------------------------------------------
+    # Name-based registrations
+    # Existing compatibility layer
+    # -------------------------------------------------
+
+    container.register_instance(
+        "settings",
+        settings,
+    )
+
+    container.register_instance(
+        "logger",
+        logger,
+    )
+
+
+    # -------------------------------------------------
+    # Type-based registrations
+    # New enterprise DI layer
+    # -------------------------------------------------
+
+    container.register_type(
+        Settings,
+        settings,
+    )
+
+    container.register_type(
+        Logger,
+        logger,
+    )
+
+
+    # -------------------------------------------------
+    # Lifecycle service
+    # -------------------------------------------------
+
+    lifecycle = LifecycleManager(
+        logger
+    )
+
+
+    container.register_instance(
+        "lifecycle",
+        lifecycle,
+    )
+
+
+    container.register_type(
+        LifecycleManager,
+        lifecycle,
+    )
+
+
+    return container
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\container\container.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Injection Container.
+"""
+
+from __future__ import annotations
+
+from threading import RLock
+from typing import Any
+
+from .descriptor import ServiceDescriptor
+from .lifetimes import ServiceLifetime
+from .provider import FactoryProvider
+from .registry import ServiceRegistry
+from src.graph import GraphRecorder
+
+
+class ServiceContainer:
+    """
+    Central dependency injection container.
+    """
+
+    def __init__(self) -> None:
+
+        self._registry = ServiceRegistry()
+
+        # Type based dependency registrations
+        self._typed_services: dict[type, Any] = {}
+
+        # Metadata describing registered services
+        self._service_descriptors: dict[
+            type,
+            ServiceDescriptor,
+        ] = {}
+
+        self._lock = RLock()
+        self._graph_recorder = GraphRecorder()
+        self._resolver = None
+
+    # --------------------------------------------------
+    # Registration
+    # --------------------------------------------------
+
+    def register_instance(
+        self,
+        name: str,
+        instance: Any,
+    ) -> None:
+        """
+        Register an already-created singleton instance.
+        """
+
+        self._registry.register(
+            name=name,
+            provider=lambda: instance,
+            lifetime=ServiceLifetime.SINGLETON,
+        )
+
+        definition = (
+            self._registry
+            .get_definition(name)
+        )
+
+        definition.instance = instance
+
+    def register_type(
+        self,
+        service_type: type,
+        instance: Any,
+    ) -> None:
+        """
+        Register a service by type.
+
+        Maintains backward compatibility while
+        creating a ServiceDescriptor.
+        """
+
+        # Existing behaviour
+        self._typed_services[
+            service_type
+        ] = instance
+
+        # Metadata for future automatic construction
+        descriptor = ServiceDescriptor(
+            service_type=service_type,
+            implementation_type=type(instance),
+            lifetime=ServiceLifetime.SINGLETON,
+            instance=instance,
+        )
+
+        self._service_descriptors[
+            service_type
+        ] = descriptor
+
+    def register_factory(
+        self,
+        name: str,
+        factory,
+        lifetime: ServiceLifetime = ServiceLifetime.SINGLETON,
+    ) -> None:
+        """
+        Register a factory function.
+        """
+
+        provider = FactoryProvider(factory)
+
+        self._registry.register(
+            name=name,
+            provider=provider,
+            lifetime=lifetime,
+        )
+
+    # --------------------------------------------------
+    # Descriptor API
+    # --------------------------------------------------
+
+    def get_descriptor(
+        self,
+        service_type: type,
+    ) -> ServiceDescriptor | None:
+        """
+        Return the descriptor for a service.
+        """
+
+        return self._service_descriptors.get(
+            service_type
+        )
+
+    def cache_constructor_dependencies(
+        self,
+        service_type: type,
+        dependencies: list[type],
+    ) -> None:
+        """
+        Cache constructor dependency metadata.
+        """
+
+        descriptor = self.get_descriptor(
+            service_type
+        )
+
+        if descriptor is None:
+            return
+
+        descriptor.constructor_dependencies = (
+            dependencies
+        )
+
+    # --------------------------------------------------
+    # Resolution
+    # --------------------------------------------------
+
+    def resolve(
+        self,
+        name: str,
+    ) -> Any:
+        """
+        Resolve a service by name.
+        """
+
+        definition = (
+            self._registry
+            .get_definition(name)
+        )
+
+        if (
+            definition.lifetime
+            == ServiceLifetime.SINGLETON
+        ):
+
+            with self._lock:
+
+                if definition.instance is None:
+
+                    if isinstance(
+                        definition.provider,
+                        FactoryProvider,
+                    ):
+                        definition.instance = (
+                            definition.provider.create()
+                        )
+
+                    else:
+                        definition.instance = (
+                            definition.provider()
+                        )
+
+                return definition.instance
+
+        if isinstance(
+            definition.provider,
+            FactoryProvider,
+        ):
+
+            return (
+                definition.provider.create()
+            )
+
+        return definition.provider()
+
+    def resolve_type(
+        self,
+        service_type: type,
+    ) -> Any:
+        """
+        Resolve a service using its type.
+        """
+
+        if service_type not in self._typed_services:
+
+            raise KeyError(
+                f"Service type "
+                f"{service_type.__name__} "
+                "is not registered."
+            )
+
+        return self._typed_services[
+            service_type
+        ]
+
+        def is_registered_type(
+        self,
+        service_type: type,
+        ) -> bool:
+            """
+        Check whether a service type has
+        already been registered.
+            """
+
+        return (
+            service_type
+            in self._typed_services
+        )
+    # --------------------------------------------------
+    # Object Construction
+    # --------------------------------------------------
+
+    def build(
+        self,
+        cls: type,
+    ) -> Any:
+        """
+        Build an object using dependency injection.
+        """
+
+        if self._resolver is None:
+
+            from .resolver import DependencyResolver
+
+            self._resolver = DependencyResolver(
+                self
+            )
+
+        return self._resolver.build(
+            cls
+        )
+
+    # --------------------------------------------------
+    # Queries
+    # --------------------------------------------------
+
+    def has(
+        self,
+        name: str,
+    ) -> bool:
+
+        return (
+            self._registry
+            .is_registered(name)
+        )
+
+    def has_type(
+        self,
+        service_type: type,
+    ) -> bool:
+        """
+        Check if type registration exists.
+        """
+
+        return (
+            service_type
+            in self._typed_services
+        )
+
+    def list_services(self):
+
+        return (
+            self._registry
+            .list_services()
+        )
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\container\dependency_tree_builder.py
+================================================================================
+"""
+dependency_tree_builder.py
+
+Builds the complete recursive dependency graph for registered services.
+"""
+
+from __future__ import annotations
+
+from typing import Type
+
+from .constructor_inspector import ConstructorInspector
+from .dependency_graph import DependencyGraph
+
+
+class DependencyTreeBuilder:
+    """
+    Recursively builds dependency relationships
+    between registered services.
+
+    This component performs graph construction only.
+
+    It never creates service instances.
+    """
+
+    def __init__(
+        self,
+        graph: DependencyGraph,
+        inspector: ConstructorInspector,
+    ) -> None:
+
+        self._graph = graph
+        self._inspector = inspector
+
+        self._visited: set[type] = set()
+
+    def build(self, service_type: Type) -> None:
+        """
+        Build the dependency tree for a service.
+        """
+
+        self._build_recursive(service_type)
+
+    def _build_recursive(self, service_type: Type) -> None:
+        """
+        Recursively inspect constructor dependencies.
+        """
+
+        if service_type in self._visited:
+            return
+
+        self._visited.add(service_type)
+
+        dependencies = self._inspector.get_dependencies(service_type)
+
+        for dependency in dependencies:
+
+            self._graph.add_dependency(
+            service_type,
+            dependency,
+        )
+
+            self._build_recursive(dependency)
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\container\descriptor.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Service Descriptor
+
+Represents a typed service registration.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any
+
+from .lifetimes import ServiceLifetime
+
+
+@dataclass(slots=True)
+class ServiceDescriptor:
+    """
+    Describes a typed service registration.
+    """
+
+    # Public service contract
+    service_type: type
+
+    # Concrete implementation
+    implementation_type: type
+
+    # Service lifetime
+    lifetime: ServiceLifetime = ServiceLifetime.SINGLETON
+
+    # Cached singleton instance
+    instance: Any | None = None
+
+    constructor_dependencies: list[type] | None = None
+
+    constructor_cached: bool = False
+
+    build_count: int = 0
+
+    # Cached constructor dependency metadata
+    constructor_dependencies: list[type] = field(
+        default_factory=list
+    )
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\container\exceptions.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Injection Exceptions.
+"""
+
+from src.exceptions import SarathiException
+
+
+class ContainerError(SarathiException):
+    """
+    Base exception for dependency injection container errors.
+    """
+
+    def __init__(self, message: str, details=None):
+        super().__init__(
+            message=message,
+            error_code="CONTAINER_ERROR",
+            details=details,
+        )
+
+
+class ServiceNotFoundError(ContainerError):
+    """
+    Raised when a requested service is not registered.
+    """
+
+    def __init__(self, service_name: str):
+        super().__init__(
+            message=f"Service '{service_name}' is not registered.",
+            details={"service": service_name},
+        )
+
+
+class ServiceAlreadyRegisteredError(ContainerError):
+    """
+    Raised when attempting to register a duplicate service.
+    """
+
+    def __init__(self, service_name: str):
+        super().__init__(
+            message=f"Service '{service_name}' is already registered.",
+            details={"service": service_name},
+        )
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\container\lifetimes.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Service lifetime definitions.
+"""
+
+from enum import Enum
+
+
+class ServiceLifetime(str, Enum):
+    """
+    Supported dependency lifetimes.
+    """
+
+    SINGLETON = "singleton"
+
+    TRANSIENT = "transient"
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\container\provider.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Provider helper utilities.
+"""
+
+
+class FactoryProvider:
+    """
+    Wraps a callable used to create service instances.
+    """
+
+    def __init__(self, factory):
+        self._factory = factory
+
+    def create(self):
+        return self._factory()
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\container\registry.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Service Registry
+"""
+
+from dataclasses import dataclass
+from typing import Any
+
+from .lifetimes import ServiceLifetime
+
+@dataclass(slots=True)
+class ServiceDefinition:
+    """
+    Metadata describing a registered service.
+    """
+
+    name: str
+    provider: Any
+    lifetime: ServiceLifetime = ServiceLifetime.SINGLETON
+    instance: Any = None
+
+
+class ServiceRegistry:
+    """
+    Stores service definitions.
+    """
+
+    def __init__(self):
+        self._services: dict[str, ServiceDefinition] = {}
+
+    def register(
+        self,
+        name: str,
+        provider: Any,
+        lifetime: ServiceLifetime = ServiceLifetime.SINGLETON,
+    ):
+
+        from .exceptions import (
+            ServiceAlreadyRegisteredError,
+        )
+
+        if name in self._services:
+            raise ServiceAlreadyRegisteredError(name)
+
+        self._services[name] = ServiceDefinition(
+            name=name,
+            provider=provider,
+            lifetime=lifetime,
+        )
+
+    def get_definition(
+        self,
+        name: str,
+    ):
+
+        from .exceptions import (
+            ServiceNotFoundError,
+        )
+
+        if name not in self._services:
+            raise ServiceNotFoundError(name)
+
+        return self._services[name]
+
+    def is_registered(
+        self,
+        name: str,
+    ) -> bool:
+
+        return name in self._services
+
+    def list_services(self):
+
+        return sorted(self._services.keys())
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\container\resolver.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Resolver
+
+Responsible for constructing objects and
+resolving constructor dependencies.
+"""
+
+from __future__ import annotations
+
+from typing import Any
+
+from src.reflection import ConstructorInspector
+
+
+class DependencyResolver:
+    """
+    Creates objects using constructor injection.
+    """
+
+    def __init__(
+        self,
+        container,
+    ) -> None:
+
+        self._container = container
+
+    def build(
+        self,
+        cls: type,
+    ) -> Any:
+        """
+        Build an object using constructor injection.
+        """
+
+        descriptor = (
+            self._container.get_descriptor(cls)
+        )
+
+        # -----------------------------
+        # Try cached constructor metadata
+        # -----------------------------
+
+        if (
+            descriptor is not None
+            and descriptor.constructor_cached
+        ):
+
+            dependency_types = (
+                descriptor.constructor_dependencies
+            )
+
+        else:
+
+            try:
+
+                dependency_types = (
+                    ConstructorInspector
+                    .get_dependency_types(cls)
+                )
+
+                self._container.cache_constructor_dependencies(
+                    cls,
+                    dependency_types,
+                )
+
+            except TypeError:
+
+                dependency_names = (
+                    ConstructorInspector
+                    .get_dependencies(cls)
+                )
+
+                dependencies = []
+
+                for name in dependency_names:
+
+                    dependencies.append(
+                        self._container.resolve(name)
+                    )
+
+                instance = cls(
+                    *dependencies
+                )
+
+                if not self._container.has_type(
+                    cls
+                ):
+                    self._container.register_type(
+                        cls,
+                        instance,
+                    )
+
+                return instance
+
+        dependencies = []
+
+        for dependency_type in dependency_types:
+
+            if self._container.has_type(
+                dependency_type
+            ):
+
+                dependency = (
+                    self._container.resolve_type(
+                        dependency_type
+                    )
+                )
+
+            else:
+
+                dependency = self.build(
+                    dependency_type
+                )
+
+            dependencies.append(
+                dependency
+            )
+
+        instance = cls(
+            *dependencies
+        )
+
+        if not self._container.has_type(
+            cls
+        ):
+            self._container.register_type(
+                cls,
+                instance,
+            )
+
+        descriptor = (
+            self._container.get_descriptor(
+                cls
+            )
+        )
+
+        if descriptor is not None:
+
+            descriptor.build_count += 1
+
+        return instance
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\core\__init__.py
+================================================================================
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\domain\__init__.py
+================================================================================
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\exceptions\__init__.py
+================================================================================
+from .base import SarathiException
+from .config_errors import ConfigurationError
+from .database_errors import DatabaseError
+from .service_errors import ServiceError
+
+
+__all__ = [
+    "SarathiException",
+    "ConfigurationError",
+    "DatabaseError",
+    "ServiceError",
+]
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\exceptions\base.py
+================================================================================
+"""
+PROJECT SARATHI
+Base Exception Framework
+
+Central parent class for all application exceptions.
+"""
+
+
+class SarathiException(Exception):
+    """
+    Base exception for PROJECT SARATHI.
+
+    All custom exceptions should inherit from this.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        error_code: str = "SARATHI_ERROR",
+        details: dict | None = None,
+    ):
+        self.message = message
+        self.error_code = error_code
+        self.details = details or {}
+
+        super().__init__(self.message)
+
+
+    def to_dict(self):
+        """
+        Convert exception into structured format.
+        Useful for APIs and monitoring systems.
+        """
+
+        return {
+            "error_code": self.error_code,
+            "message": self.message,
+            "details": self.details,
+        }
+
+
+    def __str__(self):
+
+        return (
+            f"[{self.error_code}] "
+            f"{self.message}"
+        )
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\exceptions\config_errors.py
+================================================================================
+from .base import SarathiException
+
+
+class ConfigurationError(SarathiException):
+    """
+    Raised when application configuration fails.
+    """
+
+    def __init__(
+        self,
+        message,
+        details=None
+    ):
+
+        super().__init__(
+            message,
+            error_code="CONFIG_ERROR",
+            details=details,
+        )
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\exceptions\database_errors.py
+================================================================================
+from .base import SarathiException
+
+
+class DatabaseError(SarathiException):
+    """
+    Database operation failures.
+    """
+
+    def __init__(
+        self,
+        message,
+        details=None
+    ):
+
+        super().__init__(
+            message,
+            error_code="DATABASE_ERROR",
+            details=details,
+        )
+        
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\exceptions\handlers.py
+================================================================================
+"""
+PROJECT SARATHI
+Global Exception Handling Framework
+"""
+
+
+import traceback
+
+
+def handle_exception(
+    exception,
+    logger
+):
+    """
+    Central production exception handler.
+    """
+
+    logger.exception(
+        "Unhandled application exception",
+        exc_info=True
+    )
+
+
+    return {
+        "success": False,
+        "error": str(exception),
+        "type": exception.__class__.__name__,
+    }
+
+
+
+def install_global_exception_handler(logger):
+    """
+    Installs system-level exception capture.
+    """
+
+
+    def global_handler(
+        exc_type,
+        exc_value,
+        exc_traceback
+    ):
+
+        if issubclass(
+            exc_type,
+            KeyboardInterrupt
+        ):
+            return
+
+
+        logger.error(
+            "Critical unhandled exception",
+            exc_info=(
+                exc_type,
+                exc_value,
+                exc_traceback
+            )
+        )
+
+
+    import sys
+
+    sys.excepthook = global_handler
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\exceptions\service_errors.py
+================================================================================
+from .base import SarathiException
+
+
+class ServiceError(SarathiException):
+    """
+    Business/service layer failures.
+    """
+
+    def __init__(
+        self,
+        message,
+        details=None
+    ):
+
+        super().__init__(
+            message,
+            error_code="SERVICE_ERROR",
+            details=details,
+        )
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\graph\__init__.py
+================================================================================
+from .graph import DependencyGraph
+from .node import DependencyNode
+
+from .exceptions import (
+    DependencyGraphError,
+    CircularDependencyError,
+)
+from .recorder import GraphRecorder
+from .traversal import GraphTraversal
+from .cycle_detector import CycleDetector
+from .printer import GraphPrinter
+
+__all__ = [
+    "DependencyGraph",
+    "DependencyNode",
+    "DependencyGraphError",
+    "CircularDependencyError",
+    "GraphRecorder",
+    "GraphTraversal",
+    "CycleDetector"
+    "GraphPrinter",
+]
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\graph\cycle_detector.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Graph Cycle Detector
+
+Detects circular dependencies inside
+the dependency graph.
+"""
+
+from __future__ import annotations
+
+from .exceptions import CircularDependencyError
+from .graph import DependencyGraph
+from .node import DependencyNode
+
+
+class CycleDetector:
+    """
+    Detects dependency cycles using
+    depth-first search.
+    """
+
+    def __init__(
+        self,
+        graph: DependencyGraph,
+    ) -> None:
+
+        self._graph = graph
+
+    def validate(self) -> None:
+        """
+        Validate the dependency graph.
+
+        Raises:
+            CircularDependencyError
+            if a cycle is found.
+        """
+
+        visited: set[type] = set()
+        active: list[type] = []
+
+        for node in self._graph:
+
+            self._visit(
+                node,
+                visited,
+                active,
+            )
+
+    def _visit(
+        self,
+        node: DependencyNode,
+        visited: set[type],
+        active: list[type],
+    ) -> None:
+
+        service = node.service_type
+
+        if service in active:
+
+            start = active.index(service)
+
+            cycle = (
+                active[start:]
+                + [service]
+            )
+
+            raise CircularDependencyError(
+                cycle
+            )
+
+        if service in visited:
+            return
+
+        active.append(service)
+
+        for dependency in node.dependencies:
+
+            self._visit(
+                dependency,
+                visited,
+                active,
+            )
+
+        active.pop()
+
+        visited.add(service)
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\graph\exceptions.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Graph Exceptions
+"""
+
+
+class DependencyGraphError(Exception):
+    """
+    Base dependency graph exception.
+    """
+
+
+class CircularDependencyError(DependencyGraphError):
+    """
+    Raised when a circular dependency
+    is detected.
+    """
+
+    def __init__(
+        self,
+        cycle: list[type],
+    ) -> None:
+
+        self.cycle = cycle
+
+        names = [
+            cls.__name__
+            for cls in cycle
+        ]
+
+        message = (
+            "Circular dependency detected:\n\n"
+            + " -> ".join(names)
+        )
+
+        super().__init__(message)
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\graph\graph.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Graph
+"""
+
+from __future__ import annotations
+
+from .node import DependencyNode
+
+
+class DependencyGraph:
+    """
+    Stores dependency relationships.
+    """
+
+    def __init__(self) -> None:
+
+        self._nodes: dict[
+            type,
+            DependencyNode,
+        ] = {}
+
+    def add_node(
+        self,
+        service_type: type,
+        implementation_type: type,
+    ) -> DependencyNode:
+
+        node = self._nodes.get(
+            service_type
+        )
+
+        if node is None:
+
+            node = DependencyNode(
+                service_type,
+                implementation_type,
+            )
+
+            self._nodes[
+                service_type
+            ] = node
+
+        return node
+
+    def get_node(
+        self,
+        service_type: type,
+    ) -> DependencyNode | None:
+
+        return self._nodes.get(
+            service_type
+        )
+
+    def contains(
+        self,
+        service_type: type,
+    ) -> bool:
+
+        return (
+            service_type
+            in self._nodes
+        )
+
+    def connect(
+        self,
+        parent: type,
+        child: type,
+    ) -> None:
+
+        parent_node = self._nodes[parent]
+        child_node = self._nodes[child]
+
+        parent_node.add_dependency(
+            child_node
+        )
+
+    def clear(self) -> None:
+
+        self._nodes.clear()
+
+    def __iter__(self):
+
+        return iter(
+            self._nodes.values()
+        )
+
+    def __len__(self):
+
+        return len(
+            self._nodes
+        )
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\graph\node.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Graph Node
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+
+
+@dataclass(slots=True)
+class DependencyNode:
+    """
+    Represents one node inside the
+    dependency graph.
+    """
+
+    service_type: type
+
+    implementation_type: type
+
+    dependencies: list["DependencyNode"] = field(
+        default_factory=list
+    )
+
+    def add_dependency(
+        self,
+        node: "DependencyNode",
+    ) -> None:
+
+        if node not in self.dependencies:
+            self.dependencies.append(node)
+
+    @property
+    def name(self) -> str:
+
+        return self.service_type.__name__
+
+    def __repr__(self):
+
+        return (
+            f"DependencyNode({self.name})"
+        )
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\graph\printer.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Graph Printer
+
+Formats a dependency graph into a
+human-readable tree.
+"""
+
+from __future__ import annotations
+
+from .graph import DependencyGraph
+from .node import DependencyNode
+
+
+class GraphPrinter:
+    """
+    Prints a dependency graph.
+    """
+
+    def __init__(
+        self,
+        graph: DependencyGraph,
+    ) -> None:
+
+        self._graph = graph
+
+    def print(self) -> str:
+        """
+        Return a formatted graph.
+        """
+
+        if len(self._graph) == 0:
+            return "Dependency graph is empty."
+
+        lines: list[str] = []
+
+        visited: set[type] = set()
+
+        for node in self._graph:
+
+            if node.service_type in visited:
+                continue
+
+            self._print_node(
+                node,
+                lines,
+                visited,
+                "",
+            )
+
+        return "\n".join(lines)
+
+    def _print_node(
+        self,
+        node: DependencyNode,
+        lines: list[str],
+        visited: set[type],
+        prefix: str,
+    ) -> None:
+
+        visited.add(
+            node.service_type
+        )
+
+        lines.append(
+            f"{prefix}{node.name}"
+        )
+
+        for dependency in node.dependencies:
+
+            self._print_node(
+                dependency,
+                lines,
+                visited,
+                prefix + "    ",
+            )
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\graph\recorder.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Graph Recorder
+
+Records dependency relationships while
+objects are being resolved.
+"""
+
+from __future__ import annotations
+
+from .graph import DependencyGraph
+
+
+class GraphRecorder:
+
+    def __init__(self):
+
+        self._graph = DependencyGraph()
+
+        self._stack: list[type] = []
+
+    @property
+    def graph(self) -> DependencyGraph:
+
+        return self._graph
+
+    def begin(
+        self,
+        service_type: type,
+    ) -> None:
+
+        self._graph.add_node(
+            service_type,
+            service_type,
+        )
+
+        if self._stack:
+
+            parent = self._stack[-1]
+
+            self._graph.add_node(
+                parent,
+                parent,
+            )
+
+            self._graph.connect(
+                parent,
+                service_type,
+            )
+
+        self._stack.append(
+            service_type
+        )
+
+    def end(self) -> None:
+
+        if self._stack:
+
+            self._stack.pop()
+
+    def reset(self) -> None:
+
+        self._stack.clear()
+
+        self._graph.clear()
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\graph\traversal.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Graph Traversal
+
+Provides graph traversal algorithms for
+dependency analysis.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Iterator
+
+from .graph import DependencyGraph
+from .node import DependencyNode
+
+
+class GraphTraversal:
+    """
+    Traverses a dependency graph.
+
+    Initially this class provides a
+    Depth-First Search (DFS) traversal.
+
+    Future versions will support:
+
+    - Breadth-First Search (BFS)
+    - Topological Ordering
+    - Startup Ordering
+    - Dependency Reports
+    """
+
+    def __init__(
+        self,
+        graph: DependencyGraph,
+    ) -> None:
+
+        self._graph = graph
+
+    def depth_first(
+        self,
+        root: DependencyNode,
+    ) -> Iterator[DependencyNode]:
+        """
+        Perform a depth-first traversal
+        starting from the given node.
+        """
+
+        visited: set[type] = set()
+
+        yield from self._dfs(
+            root,
+            visited,
+        )
+
+    def _dfs(
+        self,
+        node: DependencyNode,
+        visited: set[type],
+    ) -> Iterator[DependencyNode]:
+        """
+        Recursive DFS implementation.
+        """
+
+        if node.service_type in visited:
+            return
+
+        visited.add(
+            node.service_type
+        )
+
+        yield node
+
+        for dependency in node.dependencies:
+
+            yield from self._dfs(
+                dependency,
+                visited,
+            )
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\infrastructure\__init__.py
+================================================================================
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\interfaces\__init__.py
+================================================================================
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\lifecycle\__init__.py
+================================================================================
+from .manager import (
+    LifecycleManager,
+    ApplicationState
+)
+
+from .startup import (
+    validate_environment
+)
+
+from .shutdown import (
+    graceful_shutdown
+)
+
+from .health import (
+    get_health_status
+)
+
+
+__all__ = [
+
+    "LifecycleManager",
+
+    "ApplicationState",
+
+    "validate_environment",
+
+    "graceful_shutdown",
+
+    "get_health_status",
+
+    "register_signal_handlers",
+]
+from .signals import register_signal_handlers
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\lifecycle\health.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Application health reporting.
+"""
+
+
+def get_health_status(
+    settings,
+    lifecycle_manager
+):
+
+    return {
+
+        "application":
+            settings.APP_NAME,
+
+        "version":
+            settings.VERSION,
+
+        "environment":
+            settings.ENVIRONMENT,
+
+        "status":
+            lifecycle_manager.get_state()
+    }
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\lifecycle\manager.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Application Lifecycle Manager
+
+Controls application startup,
+runtime state and shutdown.
+"""
+
+
+from enum import Enum
+
+
+class ApplicationState(Enum):
+    """
+    Possible application states.
+    """
+
+    STARTING = "STARTING"
+
+    RUNNING = "RUNNING"
+
+    STOPPING = "STOPPING"
+
+    STOPPED = "STOPPED"
+
+    FAILED = "FAILED"
+
+
+
+class LifecycleManager:
+    """
+    Central lifecycle controller.
+    """
+
+
+    def __init__(self, logger):
+
+        self.logger = logger
+
+        self.state = ApplicationState.STOPPED
+
+
+
+    def start(self):
+
+        self.logger.info(
+            "Application lifecycle starting"
+        )
+
+        self.state = ApplicationState.STARTING
+
+
+
+    def mark_running(self):
+
+        self.state = ApplicationState.RUNNING
+
+        self.logger.info(
+            "Application state: RUNNING"
+        )
+
+
+
+    def stop(self):
+
+        self.state = ApplicationState.STOPPING
+
+        self.logger.info(
+            "Application shutdown initiated"
+        )
+
+
+        self.state = ApplicationState.STOPPED
+
+        self.logger.info(
+            "Application state: STOPPED"
+        )
+
+
+
+    def fail(self):
+
+        self.state = ApplicationState.FAILED
+
+        self.logger.error(
+            "Application state: FAILED"
+        )
+
+
+
+    def get_state(self):
+
+        return self.state.value
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\lifecycle\shutdown.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Graceful shutdown handler.
+"""
+
+
+def graceful_shutdown(
+    lifecycle_manager,
+    logger
+):
+
+    logger.info(
+        "Executing graceful shutdown"
+    )
+
+
+    lifecycle_manager.stop()
+
+
+    logger.info(
+        "Shutdown completed"
+    )
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\lifecycle\signals.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Operating System signal handling.
+"""
+
+import signal
+
+
+def register_signal_handlers(lifecycle_manager, logger):
+    """
+    Register operating system signal handlers for graceful shutdown.
+    """
+
+    def signal_handler(signum, frame):
+        logger.warning(
+            "Shutdown signal received: %s",
+            signal.Signals(signum).name,
+        )
+
+        lifecycle_manager.stop()
+
+        logger.info(
+            "Application terminated gracefully."
+        )
+
+        raise SystemExit(0)
+
+    # Ctrl+C
+    signal.signal(signal.SIGINT, signal_handler)
+
+    # SIGTERM (if supported on this platform)
+    if hasattr(signal, "SIGTERM"):
+        signal.signal(signal.SIGTERM, signal_handler)
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\lifecycle\startup.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Startup validation checks.
+"""
+
+
+from pathlib import Path
+
+
+
+def validate_environment(settings, logger):
+
+    """
+    Validate required runtime environment.
+    """
+
+
+    logger.info(
+        "Running startup validation"
+    )
+
+
+    checks = []
+
+
+    project_root = Path(
+        settings.PROJECT_ROOT
+    )
+
+
+    checks.append(
+        project_root.exists()
+    )
+
+
+    if all(checks):
+
+        logger.info(
+            "Startup validation successful"
+        )
+
+        return True
+
+
+
+    logger.error(
+        "Startup validation failed"
+    )
+
+    return False
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\reflection\__init__.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Reflection utilities.
+"""
+
+from .constructor import ConstructorInspector
+
+__all__ = [
+    "ConstructorInspector",
+]
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\reflection\constructor.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Constructor Reflection Utilities
+
+Responsible for inspecting classes
+and discovering constructor dependencies.
+"""
+
+from __future__ import annotations
+
+import inspect
+
+
+class ConstructorInspector:
+    """
+    Inspects constructors for dependency information.
+    """
+
+    @staticmethod
+    def get_dependencies(
+        cls: type,
+    ) -> list[str]:
+        """
+        Return constructor parameter names.
+
+        This supports the original
+        name-based dependency injection.
+        """
+
+        signature = inspect.signature(
+            cls.__init__
+        )
+
+        dependencies = []
+
+        for parameter in signature.parameters.values():
+
+            if parameter.name == "self":
+                continue
+
+            dependencies.append(
+                parameter.name
+            )
+
+        return dependencies
+
+
+    @staticmethod
+    def get_dependency_types(
+        cls: type,
+    ) -> list[type]:
+        """
+        Return constructor parameter types.
+
+        This supports type-based dependency injection.
+        """
+
+        signature = inspect.signature(
+            cls.__init__
+        )
+
+        dependency_types = []
+
+        for parameter in signature.parameters.values():
+
+            if parameter.name == "self":
+                continue
+
+            if parameter.annotation is inspect._empty:
+                raise TypeError(
+                    f"{cls.__name__}.{parameter.name} "
+                    "is missing a type annotation."
+                )
+
+            dependency_types.append(
+                parameter.annotation
+            )
+
+        return dependency_types
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\services\__init__.py
+================================================================================
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\utils\__init__.py
+================================================================================
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\src\utils\logger.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Centralized logging system.
+"""
+
+import logging
+from logging.handlers import RotatingFileHandler
+
+from config.paths import LOG_DIR
+from config.constants import DEFAULT_LOG_LEVEL
+
+LOG_FILE = LOG_DIR / "sarathi.log"
+
+logger = logging.getLogger("sarathi")
+
+if not logger.handlers:
+    level = getattr(logging, DEFAULT_LOG_LEVEL.upper(), logging.INFO)
+    logger.setLevel(level)
+
+    formatter = logging.Formatter(
+        "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+
+    file_handler = RotatingFileHandler(
+        LOG_FILE,
+        maxBytes=1_000_000,
+        backupCount=5,
+        encoding="utf-8",
+    )
+    file_handler.setFormatter(formatter)
+
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+
+    logger.propagate = False
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\tests\test_cycle_detector.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Cycle Detector Tests
+"""
+
+from src.graph import (
+    CircularDependencyError,
+    CycleDetector,
+    DependencyGraph,
+)
+
+
+class ServiceA:
+    pass
+
+
+class ServiceB:
+    pass
+
+
+class ServiceC:
+    pass
+
+
+def test_cycle_detection():
+
+    graph = DependencyGraph()
+
+    graph.add_node(
+        ServiceA,
+        ServiceA,
+    )
+
+    graph.add_node(
+        ServiceB,
+        ServiceB,
+    )
+
+    graph.add_node(
+        ServiceC,
+        ServiceC,
+    )
+
+    graph.connect(
+        ServiceA,
+        ServiceB,
+    )
+
+    graph.connect(
+        ServiceB,
+        ServiceC,
+    )
+
+    graph.connect(
+        ServiceC,
+        ServiceA,
+    )
+
+    detector = CycleDetector(
+        graph
+    )
+
+    try:
+
+        detector.validate()
+
+    except CircularDependencyError:
+
+        return
+
+    raise AssertionError(
+        "Expected CircularDependencyError."
+    )
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\tests\test_descriptor.py
+================================================================================
+from src.container.descriptor import ServiceDescriptor
+from src.container.lifetimes import ServiceLifetime
+
+
+class Logger:
+    pass
+
+
+def test_descriptor():
+
+    descriptor = ServiceDescriptor(
+        service_type=Logger,
+        implementation_type=Logger,
+    )
+
+    assert descriptor.service_type is Logger
+    assert descriptor.implementation_type is Logger
+    assert descriptor.instance is None
+    assert descriptor.lifetime == ServiceLifetime.SINGLETON
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\tests\test_graph.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Graph Tests
+"""
+
+from src.graph import (
+    DependencyGraph,
+)
+
+
+class ServiceA:
+    pass
+
+
+class ServiceB:
+    pass
+
+
+class ServiceC:
+    pass
+
+
+def test_graph_creation():
+
+    graph = DependencyGraph()
+
+    graph.add_node(
+        ServiceA,
+        ServiceA,
+    )
+
+    graph.add_node(
+        ServiceB,
+        ServiceB,
+    )
+
+    graph.add_node(
+        ServiceC,
+        ServiceC,
+    )
+
+    graph.connect(
+        ServiceA,
+        ServiceB,
+    )
+
+    graph.connect(
+        ServiceB,
+        ServiceC,
+    )
+
+    assert len(graph) == 3
+
+
+
+================================================================================
+FILE: C:\Users\djbal\OneDrive\Desktop\PROJECT_SARATHI\tests\test_graph_printer.py
+================================================================================
+"""
+PROJECT SARATHI
+
+Dependency Graph Printer Tests
+"""
+
+from src.graph import (
+    DependencyGraph,
+    GraphPrinter,
+)
+
+
+class ServiceA:
+    pass
+
+
+class ServiceB:
+    pass
+
+
+class ServiceC:
+    pass
+
+
+def test_graph_printer():
+
+    graph = DependencyGraph()
+
+    graph.add_node(
+        ServiceA,
+        ServiceA,
+    )
+
+    graph.add_node(
+        ServiceB,
+        ServiceB,
+    )
+
+    graph.add_node(
+        ServiceC,
+        ServiceC,
+    )
+
+    graph.connect(
+        ServiceA,
+        ServiceB,
+    )
+
+    graph.connect(
+        ServiceB,
+        ServiceC,
+    )
+
+    printer = GraphPrinter(
+        graph
+    )
+
+    output = printer.print()
+
+    assert "ServiceA" in output
+    assert "ServiceB" in output
+    assert "ServiceC" in output
+    
+
+
+

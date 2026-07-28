@@ -1,0 +1,153 @@
+[DIR ] .\src\application
+[DIR ] .\src\container
+[DIR ] .\src\core
+[DIR ] .\src\domain
+[DIR ] .\src\exceptions
+[DIR ] .\src\graph
+[DIR ] .\src\infrastructure
+[DIR ] .\src\interfaces
+[DIR ] .\src\lifecycle
+[DIR ] .\src\reflection
+[DIR ] .\src\services
+[DIR ] .\src\utils
+[DIR ] .\src\application\__pycache__
+[FILE] .\src\application\application.py
+[FILE] .\src\application\builder.py
+[FILE] .\src\application\context.py
+[FILE] .\src\application\__init__.py
+[FILE] .\src\application\__pycache__\application.cpython-314.pyc
+[FILE] .\src\application\__pycache__\builder.cpython-314.pyc
+[FILE] .\src\application\__pycache__\context.cpython-314.pyc
+[FILE] .\src\application\__pycache__\__init__.cpython-314.pyc
+[DIR ] .\src\container\__pycache__
+[FILE] .\src\container\bootstrap.py
+[FILE] .\src\container\container.py
+[FILE] .\src\container\dependency_tree_builder.py
+[FILE] .\src\container\descriptor.py
+[FILE] .\src\container\exceptions.py
+[FILE] .\src\container\lifetimes.py
+[FILE] .\src\container\provider.py
+[FILE] .\src\container\registry.py
+[FILE] .\src\container\resolver.py
+[FILE] .\src\container\__init__.py
+[FILE] .\src\container\__pycache__\bootstrap.cpython-314.pyc
+[FILE] .\src\container\__pycache__\container.cpython-314.pyc
+[FILE] .\src\container\__pycache__\descriptor.cpython-314.pyc
+[FILE] .\src\container\__pycache__\exceptions.cpython-314.pyc
+[FILE] .\src\container\__pycache__\lifetimes.cpython-314.pyc
+[FILE] .\src\container\__pycache__\provider.cpython-314.pyc
+[FILE] .\src\container\__pycache__\registry.cpython-314.pyc
+[FILE] .\src\container\__pycache__\resolver.cpython-314.pyc
+[FILE] .\src\container\__pycache__\__init__.cpython-314.pyc
+[FILE] .\src\core\__init__.py
+[FILE] .\src\domain\__init__.py
+[DIR ] .\src\exceptions\__pycache__
+[FILE] .\src\exceptions\base.py
+[FILE] .\src\exceptions\config_errors.py
+[FILE] .\src\exceptions\database_errors.py
+[FILE] .\src\exceptions\handlers.py
+[FILE] .\src\exceptions\service_errors.py
+[FILE] .\src\exceptions\__init__.py
+[FILE] .\src\exceptions\__pycache__\base.cpython-314.pyc
+[FILE] .\src\exceptions\__pycache__\config_errors.cpython-314.pyc
+[FILE] .\src\exceptions\__pycache__\database_errors.cpython-314.pyc
+[FILE] .\src\exceptions\__pycache__\handlers.cpython-314.pyc
+[FILE] .\src\exceptions\__pycache__\service_errors.cpython-314.pyc
+[FILE] .\src\exceptions\__pycache__\__init__.cpython-314.pyc
+[DIR ] .\src\graph\__pycache__
+[FILE] .\src\graph\cycle_detector.py
+[FILE] .\src\graph\exceptions.py
+[FILE] .\src\graph\graph.py
+[FILE] .\src\graph\node.py
+[FILE] .\src\graph\printer.py
+[FILE] .\src\graph\recorder.py
+[FILE] .\src\graph\traversal.py
+[FILE] .\src\graph\__init__.py
+[FILE] .\src\graph\__pycache__\cycle_detector.cpython-314.pyc
+[FILE] .\src\graph\__pycache__\exceptions.cpython-314.pyc
+[FILE] .\src\graph\__pycache__\graph.cpython-314.pyc
+[FILE] .\src\graph\__pycache__\node.cpython-314.pyc
+[FILE] .\src\graph\__pycache__\printer.cpython-314.pyc
+[FILE] .\src\graph\__pycache__\recorder.cpython-314.pyc
+[FILE] .\src\graph\__pycache__\traversal.cpython-314.pyc
+[FILE] .\src\graph\__pycache__\__init__.cpython-314.pyc
+[FILE] .\src\infrastructure\__init__.py
+[FILE] .\src\interfaces\__init__.py
+[DIR ] .\src\lifecycle\__pycache__
+[FILE] .\src\lifecycle\health.py
+[FILE] .\src\lifecycle\manager.py
+[FILE] .\src\lifecycle\shutdown.py
+[FILE] .\src\lifecycle\signals.py
+[FILE] .\src\lifecycle\startup.py
+[FILE] .\src\lifecycle\__init__.py
+[FILE] .\src\lifecycle\__pycache__\health.cpython-314.pyc
+[FILE] .\src\lifecycle\__pycache__\manager.cpython-314.pyc
+[FILE] .\src\lifecycle\__pycache__\shutdown.cpython-314.pyc
+[FILE] .\src\lifecycle\__pycache__\signals.cpython-314.pyc
+[FILE] .\src\lifecycle\__pycache__\startup.cpython-314.pyc
+[FILE] .\src\lifecycle\__pycache__\__init__.cpython-314.pyc
+[DIR ] .\src\reflection\__pycache__
+[FILE] .\src\reflection\constructor.py
+[FILE] .\src\reflection\__init__.py
+[FILE] .\src\reflection\__pycache__\constructor.cpython-314.pyc
+[FILE] .\src\reflection\__pycache__\__init__.cpython-314.pyc
+[FILE] .\src\services\__init__.py
+[DIR ] .\src\utils\__pycache__
+[FILE] .\src\utils\logger.py
+[FILE] .\src\utils\__init__.py
+[FILE] .\src\utils\__pycache__\logger.cpython-314.pyc
+[FILE] .\src\utils\__pycache__\__init__.cpython-314.pyc
+[DIR ] .\tests\__pycache__
+[FILE] .\tests\test_cycle_detector.py
+[FILE] .\tests\test_descriptor.py
+[FILE] .\tests\test_graph.py
+[FILE] .\tests\test_graph_printer.py
+[FILE] .\tests\__pycache__\test_cycle_detector.cpython-314-pytest-9.1.1.pyc
+[FILE] .\tests\__pycache__\test_cycle_detector.cpython-314.pyc
+[FILE] .\tests\__pycache__\test_descriptor.cpython-314-pytest-9.1.1.pyc
+[FILE] .\tests\__pycache__\test_graph.cpython-314-pytest-9.1.1.pyc
+[FILE] .\tests\__pycache__\test_graph.cpython-314.pyc
+[FILE] .\tests\__pycache__\test_graph_printer.cpython-314-pytest-9.1.1.pyc
+[FILE] .\tests\__pycache__\test_graph_printer.cpython-314.pyc
+[DIR ] .\scripts\__pycache__
+[FILE] .\scripts\bootstrap.py
+[FILE] .\scripts\test_application.py
+[FILE] .\scripts\test_bootstrap.py
+[FILE] .\scripts\test_builder.py
+[FILE] .\scripts\test_constructor_injection.py
+[FILE] .\scripts\test_container.py
+[FILE] .\scripts\test_cycle_detector.py
+[FILE] .\scripts\test_graph.py
+[FILE] .\scripts\test_graph_printer.py
+[FILE] .\scripts\test_lifecycle.py
+[FILE] .\scripts\test_reflection.py
+[FILE] .\scripts\test_reflection_types.py
+[FILE] .\scripts\test_registry.py
+[FILE] .\scripts\test_typed_injection.py
+[FILE] .\scripts\__pycache__\test_application.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_application.cpython-314.pyc
+[FILE] .\scripts\__pycache__\test_bootstrap.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_bootstrap.cpython-314.pyc
+[FILE] .\scripts\__pycache__\test_builder.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_builder.cpython-314.pyc
+[FILE] .\scripts\__pycache__\test_constructor_injection.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_constructor_injection.cpython-314.pyc
+[FILE] .\scripts\__pycache__\test_container.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_container.cpython-314.pyc
+[FILE] .\scripts\__pycache__\test_cycle_detector.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_cycle_detector.cpython-314.pyc
+[FILE] .\scripts\__pycache__\test_dependency_tree_builder.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_graph.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_graph.cpython-314.pyc
+[FILE] .\scripts\__pycache__\test_graph_printer.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_graph_printer.cpython-314.pyc
+[FILE] .\scripts\__pycache__\test_lifecycle.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_lifecycle.cpython-314.pyc
+[FILE] .\scripts\__pycache__\test_reflection.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_reflection.cpython-314.pyc
+[FILE] .\scripts\__pycache__\test_reflection_types.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_reflection_types.cpython-314.pyc
+[FILE] .\scripts\__pycache__\test_registry.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_registry.cpython-314.pyc
+[FILE] .\scripts\__pycache__\test_typed_injection.cpython-314-pytest-9.1.1.pyc
+[FILE] .\scripts\__pycache__\test_typed_injection.cpython-314.pyc
