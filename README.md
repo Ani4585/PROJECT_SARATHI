@@ -1,142 +1,130 @@
-# PROJECT SARATHI
+﻿# PROJECT SARATHI
 
-> Enterprise-Grade Modular Intelligence & Application Framework
+> Enterprise-Grade Modular Intelligence and Application Framework
 
----
+## Current Release
 
-## Current Version
+| Item | Value |
+|------|-------|
+| Version | v0.7.0 |
+| Milestone | M12.1 - Extensible Developer CLI Architecture |
+| Build Date | 29 July 2026 |
+| Status | Passing |
 
-**v0.6.1-dev**
+## Vision
 
-Current Milestone:
+PROJECT SARATHI is a modular, enterprise-grade Python framework for
+building large-scale intelligent software systems.
 
-**M11 – Dependency Validation Engine**
+It provides a foundation for dependency injection, lifecycle
+management, configuration, diagnostics, modular architecture,
+developer tooling, and advanced application orchestration.
 
----
+Its first flagship implementation is the National Circular Bioeconomy
+Infrastructure Intelligence Platform, designed to generate technical,
+financial, engineering, and policy artefacts from a unified knowledge
+repository.
 
-# Vision
+## Framework Capabilities
 
-PROJECT SARATHI is a modular, enterprise-grade Python framework for building large-scale intelligent software systems.
+- Centralized configuration
+- Structured logging
+- Exception and error handling
+- Application lifecycle management
+- Service registration and dependency injection
+- Constructor and type-based injection
+- Reflection and constructor metadata caching
+- Dependency graph recording and traversal
+- Cycle detection
+- Dependency planning and validation
+- Extensible developer command architecture
+- Explicit built-in command registration
+- Fail-fast repository verification
+- Thin executable composition entry point
 
-It provides a robust foundation for dependency injection, lifecycle management, configuration, diagnostics, modular architecture, and advanced application orchestration.
+## Developer CLI
 
-The first flagship implementation of this framework is the **National Circular Bioeconomy Infrastructure Intelligence Platform**, designed to generate technical, financial, engineering, and policy artefacts from a unified knowledge repository.
+PROJECT SARATHI provides one developer entry point:
 
----
-
-# Long-Term Mission
-
-Develop a framework capable of powering enterprise-scale platforms that can generate:
-
-- Detailed Project Reports (DPRs)
-- Master Dossiers
-- Cabinet Briefings
-- Investor Reports
-- Engineering Reports
-- Interactive HTML Applications
-- GIS Dashboards
-- Financial Models
-- Decision Intelligence Systems
-
-from a unified knowledge repository.
-
----
-
-# Current Features
-
-- ✅ Dependency Injection Container
-- ✅ Constructor Injection
-- ✅ Reflection Engine
-- ✅ Constructor Metadata Cache
-- ✅ Dependency Resolver
-- ✅ Dependency Graph
-- ✅ Graph Recorder
-- ✅ Dependency Planner
-- ✅ Dependency Validator
-- ✅ Cycle Detection
-- ✅ Lifecycle Framework
-
----
-
-# Project Structure
-
-```text
-src/
-tests/
-docs/
-scripts/
-
-README.md
-pytest.ini
-main.py
+```powershell
+python sarathi.py <command>
 ```
 
----
+| Command | Purpose |
+|---------|---------|
+| `stats` | Display repository statistics |
+| `status` | Display framework, repository, and Git status |
+| `health` | Run automated tests and compilation checks |
+| `test` | Run the complete pytest suite |
+| `compile` | Compile maintained Python locations |
+| `version` | Display authoritative version information |
+| `release` | Run the release gate |
+| `verify` | Run complete one-command repository verification |
 
-# Documentation
+The standard verification command is:
 
-| Document | Description |
-|----------|-------------|
-| `docs/STATUS.md` | Live engineering dashboard |
-| `docs/CHANGELOG.md` | Version history |
+```powershell
+python sarathi.py verify
+```
+
+## Project Structure
+
+```text
+config/
+docs/
+scripts/
+    tooling/
+        cli/
+src/
+tests/
+
+main.py
+sarathi.py
+pytest.ini
+README.md
+```
+
+## Documentation
+
+| Document | Purpose |
+|----------|---------|
+| `docs/STATUS.md` | Live engineering status |
+| `docs/CHANGELOG.md` | Release history |
 | `docs/PROJECT_ROADMAP.md` | Long-term roadmap |
 | `docs/SOFTWARE_ARCHITECTURE.md` | Architecture documentation |
 | `docs/DEVELOPMENT_GUIDE.md` | Development workflow |
-| `docs/RELEASE_GATE.md` | Release checklist |
-| `docs/milestones/` | Milestone history |
+| `docs/RELEASE_GATE.md` | Release requirements |
+| `docs/milestones/` | Completed milestone records |
 
----
+## Engineering Workflow
 
-# Development Workflow
-
-Every milestone follows the same engineering process:
-
-```
+```text
 Design
-    ↓
-Implementation
-    ↓
-Unit Tests
-    ↓
-Compilation
-    ↓
-Release Gate
-    ↓
-Documentation
-    ↓
-Git Commit
-    ↓
-Version Tag
+  -> Implementation
+  -> Focused Tests
+  -> Full Regression Suite
+  -> Compilation
+  -> Release Gate
+  -> Documentation
+  -> Commit
+  -> Version Tag
 ```
 
----
+## Current Quality Status
 
-# Current Status
+- Automated tests: 63 passed
+- Focused CLI tests: 47 passed
+- Compilation: passed
+- Built-in CLI commands: 8
+- Architecture health: stable
+- Backward compatibility: preserved
 
-- Framework Status: Active Development
-- Build Status: Passing
-- Unit Tests: 6 / 6 Passed
-- Compilation: Passed
-- Architecture Health: Stable
+## Next Milestone
 
----
+M12.2 - Framework Observability
 
-# Roadmap
+## License
 
-- Dependency Injection Framework
-- Diagnostics Framework
-- Configuration Engine
-- Scoped Lifetimes
-- Module System
-- Event Bus
-- Plugin Architecture
-- Performance Optimisation
-- Version 1.0 Release
-
----
-
-# License
-
-Copyright © 2026
+Copyright 2026 PROJECT SARATHI TEAM.
 
 All Rights Reserved.

@@ -1,62 +1,67 @@
-# PROJECT SARATHI
+﻿# PROJECT SARATHI Release Gate
 
-# Release Gate
+Every stable milestone must satisfy this gate before its commit and tag
+are pushed.
 
-Every milestone MUST satisfy every item before Git Commit.
-
----
-
-# Build
+## Source and Build
 
 - [ ] No syntax errors
-- [ ] Project compiles
+- [ ] Maintained Python locations compile
+- [ ] Application and tooling modules import successfully
+- [ ] Authoritative version metadata is valid
 
----
+## Testing
 
-# Testing
+- [ ] Focused milestone tests pass
+- [ ] Complete regression suite passes
+- [ ] No unexpected skipped tests
+- [ ] Process exit codes propagate correctly
 
-- [ ] All tests pass
-- [ ] No skipped tests
-- [ ] No failing tests
+## Architecture
 
----
+- [ ] Dependency graph remains valid
+- [ ] No circular dependencies are introduced
+- [ ] Public command contracts remain stable
+- [ ] New components have focused tests
+- [ ] Composition roots remain thin
 
-# Architecture
+## Documentation
 
-- [ ] No circular dependencies
-- [ ] Dependency graph valid
-- [ ] Imports verified
+- [ ] README reflects the current version
+- [ ] STATUS reflects current verification results
+- [ ] CHANGELOG contains the release
+- [ ] Milestone documentation is complete
+- [ ] Next milestone is identified
 
----
+## Repository
 
-# Documentation
+- [ ] Required files exist
+- [ ] Git diff contains no whitespace errors
+- [ ] No temporary or debug files are included
+- [ ] Changed files match the milestone scope
+- [ ] Commit and annotated tag names are correct
 
-- [ ] STATUS.md updated
-- [ ] CHANGELOG.md updated
-- [ ] README updated (if required)
-
----
-
-# Repository
-
-- [ ] Git status reviewed
-- [ ] No temporary files
-- [ ] No debug code
-
----
-
-# Final Verification
+## Standard Verification
 
 Run:
 
 ```powershell
-python -m pytest -v
-
-python -m compileall src
-
-git status
+python sarathi.py verify
 ```
 
-If every check passes:
+The command must finish successfully and print:
 
-✅ Ready for Commit
+```text
+VERIFICATION COMPLETE
+READY FOR COMMIT
+```
+
+Before committing, also run:
+
+```powershell
+git diff --check
+git status --short
+```
+
+A release may be committed and tagged only after every applicable check
+passes.

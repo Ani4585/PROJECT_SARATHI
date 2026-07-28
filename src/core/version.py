@@ -1,4 +1,4 @@
-"""
+﻿"""
 PROJECT SARATHI
 
 Framework version metadata.
@@ -8,6 +8,6 @@ framework release and milestone information.
 """
 
 FRAMEWORK_NAME = "PROJECT SARATHI"
-VERSION = "0.6.2"
-MILESTONE = "M11.5"
-BUILD_DATE = "2026-07-28"
+VERSION = "0.7.0"
+MILESTONE = "M12.1"
+BUILD_DATE = "2026-07-29"
