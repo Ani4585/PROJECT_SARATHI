@@ -3,8 +3,8 @@ PROJECT SARATHI
 
 Constructor Reflection Utilities
 
-Responsible for inspecting classes
-and discovering constructor dependencies.
+Responsible for inspecting classes and discovering
+constructor dependencies.
 """
 
 from __future__ import annotations
@@ -18,33 +18,47 @@ class ConstructorInspector:
     """
 
     @staticmethod
-    def get_dependencies(
+    def _parameters(
         cls: type,
-    ) -> list[str]:
+    ) -> list[inspect.Parameter]:
         """
-        Return constructor parameter names.
-
-        This supports the original
-        name-based dependency injection.
+        Return injectable constructor parameters.
         """
 
         signature = inspect.signature(
             cls.__init__
         )
 
-        dependencies = []
+        parameters: list[inspect.Parameter] = []
 
         for parameter in signature.parameters.values():
 
             if parameter.name == "self":
                 continue
 
-            dependencies.append(
-                parameter.name
-            )
+            if parameter.kind in (
+                inspect.Parameter.VAR_POSITIONAL,
+                inspect.Parameter.VAR_KEYWORD,
+            ):
+                continue
 
-        return dependencies
+            parameters.append(parameter)
 
+        return parameters
+
+    @staticmethod
+    def get_dependencies(
+        cls: type,
+    ) -> list[str]:
+        """
+        Return constructor parameter names.
+        """
+
+        return [
+            parameter.name
+            for parameter
+            in ConstructorInspector._parameters(cls)
+        ]
 
     @staticmethod
     def get_dependency_types(
@@ -52,22 +66,16 @@ class ConstructorInspector:
     ) -> list[type]:
         """
         Return constructor parameter types.
-
-        This supports type-based dependency injection.
         """
 
-        signature = inspect.signature(
-            cls.__init__
-        )
+        dependency_types: list[type] = []
 
-        dependency_types = []
+        for parameter in ConstructorInspector._parameters(
+            cls
+        ):
 
-        for parameter in signature.parameters.values():
+            if parameter.annotation is inspect.Signature.empty:
 
-            if parameter.name == "self":
-                continue
-
-            if parameter.annotation is inspect._empty:
                 raise TypeError(
                     f"{cls.__name__}.{parameter.name} "
                     "is missing a type annotation."

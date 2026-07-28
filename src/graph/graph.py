@@ -24,23 +24,33 @@ class DependencyGraph:
     def add_node(
         self,
         service_type: type,
-        implementation_type: type,
+        implementation_type: type | None = None,    
     ) -> DependencyNode:
+        """
+        Add a node to the dependency graph.
+
+        If no implementation type is supplied,
+        assume the service type is also the
+        implementation type.
+        """
+
+        if implementation_type is None:
+            implementation_type = service_type
 
         node = self._nodes.get(
-            service_type
-        )
+        service_type
+    )
 
         if node is None:
 
             node = DependencyNode(
-                service_type,
-                implementation_type,
-            )
+            service_type,
+            implementation_type,
+        )
 
-            self._nodes[
-                service_type
-            ] = node
+        self._nodes[
+            service_type
+        ] = node
 
         return node
 
@@ -75,6 +85,21 @@ class DependencyGraph:
         parent_node.add_dependency(
             child_node
         )
+
+    def add_dependency(
+        self,
+        parent: type,
+        child: type,
+    ) -> None:
+        """
+        Compatibility wrapper used by
+        dependency planners.
+        """
+
+        self.connect(
+        parent,
+        child,
+    )
 
     def clear(self) -> None:
 

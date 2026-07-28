@@ -17,6 +17,6 @@ __all__ = [
     "CircularDependencyError",
     "GraphRecorder",
     "GraphTraversal",
-    "CycleDetector"
+    "CycleDetector",
     "GraphPrinter",
 ]

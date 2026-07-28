@@ -58,6 +58,33 @@ class GraphRecorder:
         if self._stack:
 
             self._stack.pop()
+            
+    def record(
+        self,
+        parent: type,
+        child: type,
+    ) -> None:
+        """
+        Record a dependency relationship without
+        using the runtime resolution stack.
+
+        Used by DependencyPlanner.
+        """
+
+        self._graph.add_node(
+            parent,
+            parent,
+        )
+
+        self._graph.add_node(
+            child,
+            child,
+        )
+
+        self._graph.connect(
+            parent,
+            child,
+        )
 
     def reset(self) -> None:
 

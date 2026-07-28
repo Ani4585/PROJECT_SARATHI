@@ -1,25 +1,21 @@
 """
-dependency_tree_builder.py
+PROJECT SARATHI
 
-Builds the complete recursive dependency graph for registered services.
+Automatic Dependency Tree Builder
+
+Builds a complete recursive dependency graph
+without creating service instances.
 """
 
 from __future__ import annotations
 
-from typing import Type
-
-from .constructor_inspector import ConstructorInspector
-from .dependency_graph import DependencyGraph
+from src.graph import DependencyGraph
+from src.reflection import ConstructorInspector
 
 
 class DependencyTreeBuilder:
     """
-    Recursively builds dependency relationships
-    between registered services.
-
-    This component performs graph construction only.
-
-    It never creates service instances.
+    Recursively builds typed dependency relationships.
     """
 
     def __init__(
@@ -30,33 +26,57 @@ class DependencyTreeBuilder:
 
         self._graph = graph
         self._inspector = inspector
-
         self._visited: set[type] = set()
 
-    def build(self, service_type: Type) -> None:
+    def build(
+        self,
+        service_type: type,
+    ) -> None:
         """
-        Build the dependency tree for a service.
+        Build a fresh dependency tree for a root service.
         """
 
-        self._build_recursive(service_type)
+        self._visited.clear()
 
-    def _build_recursive(self, service_type: Type) -> None:
+        self._build_recursive(
+            service_type
+        )
+
+    def _build_recursive(
+        self,
+        service_type: type,
+    ) -> None:
         """
-        Recursively inspect constructor dependencies.
+        Recursively inspect typed dependencies.
         """
 
         if service_type in self._visited:
             return
 
-        self._visited.add(service_type)
-
-        dependencies = self._inspector.get_dependencies(service_type)
-
-        for dependency in dependencies:
-
-            self._graph.add_dependency(
-            service_type,
-            dependency,
+        self._visited.add(
+            service_type
         )
 
-            self._build_recursive(dependency)
+        self._graph.add_node(
+            service_type
+        )
+
+        dependencies = (
+            self._inspector
+            .get_dependency_types(service_type)
+        )
+
+        for dependency_type in dependencies:
+
+            self._graph.add_node(
+                dependency_type
+            )
+
+            self._graph.add_dependency(
+                service_type,
+                dependency_type,
+            )
+
+            self._build_recursive(
+                dependency_type
+            )

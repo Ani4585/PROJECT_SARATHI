@@ -4,9 +4,12 @@ PROJECT SARATHI
 Application constants.
 """
 
-APP_NAME = "PROJECT SARATHI"
+from src.core.version import (
+    FRAMEWORK_NAME,
+    VERSION,
+)
 
-VERSION = "0.1.0"
+APP_NAME = FRAMEWORK_NAME
 
 AUTHOR = "PROJECT SARATHI TEAM"
 

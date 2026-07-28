@@ -9,12 +9,15 @@ from __future__ import annotations
 from threading import RLock
 from typing import Any
 
+from .dependency_tree_builder import DependencyTreeBuilder
 from .descriptor import ServiceDescriptor
 from .lifetimes import ServiceLifetime
 from .provider import FactoryProvider
 from .registry import ServiceRegistry
-from src.graph import GraphRecorder
 
+from src.graph import GraphRecorder
+from src.reflection import ConstructorInspector
+from .validator import DependencyValidator
 
 class ServiceContainer:
     """
@@ -25,7 +28,7 @@ class ServiceContainer:
 
         self._registry = ServiceRegistry()
 
-        # Type based dependency registrations
+        # Type-based dependency registrations
         self._typed_services: dict[type, Any] = {}
 
         # Metadata describing registered services
@@ -35,7 +38,21 @@ class ServiceContainer:
         ] = {}
 
         self._lock = RLock()
+
+        # Dependency graph infrastructure
         self._graph_recorder = GraphRecorder()
+
+        self._dependency_tree_builder = (
+            DependencyTreeBuilder(
+                self._graph_recorder.graph,
+                ConstructorInspector(),
+            )
+        )
+        self._validator = DependencyValidator(
+            self._graph_recorder.graph
+        )
+        
+        # Lazy-created resolver
         self._resolver = None
 
     # --------------------------------------------------
@@ -76,12 +93,10 @@ class ServiceContainer:
         creating a ServiceDescriptor.
         """
 
-        # Existing behaviour
         self._typed_services[
             service_type
         ] = instance
 
-        # Metadata for future automatic construction
         descriptor = ServiceDescriptor(
             service_type=service_type,
             implementation_type=type(instance),
@@ -137,16 +152,17 @@ class ServiceContainer:
         """
 
         descriptor = self.get_descriptor(
-            service_type
-        )
+        service_type
+    )
 
         if descriptor is None:
             return
 
-        descriptor.constructor_dependencies = (
+        descriptor.constructor_dependencies = list(
             dependencies
         )
 
+        descriptor.constructor_cached = True
     # --------------------------------------------------
     # Resolution
     # --------------------------------------------------
@@ -177,11 +193,13 @@ class ServiceContainer:
                         definition.provider,
                         FactoryProvider,
                     ):
+
                         definition.instance = (
                             definition.provider.create()
                         )
 
                     else:
+
                         definition.instance = (
                             definition.provider()
                         )
@@ -219,19 +237,20 @@ class ServiceContainer:
             service_type
         ]
 
-        def is_registered_type(
+    def is_registered_type(
         self,
         service_type: type,
-        ) -> bool:
-            """
+    ) -> bool:
+        """
         Check whether a service type has
         already been registered.
-            """
+        """
 
         return (
             service_type
             in self._typed_services
         )
+
     # --------------------------------------------------
     # Object Construction
     # --------------------------------------------------
@@ -275,7 +294,7 @@ class ServiceContainer:
         service_type: type,
     ) -> bool:
         """
-        Check if type registration exists.
+        Check if a type registration exists.
         """
 
         return (
@@ -283,7 +302,20 @@ class ServiceContainer:
             in self._typed_services
         )
 
-    def list_services(self):
+    @property
+    def graph_recorder(
+        self,
+    ) -> GraphRecorder:
+        """
+        Return the graph recorder owned
+        by this container.
+        """
+
+        return self._graph_recorder
+
+    def list_services(
+        self,
+    ):
 
         return (
             self._registry
