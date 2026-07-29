@@ -1,6 +1,29 @@
-﻿# Changelog
+# Changelog
 
 All notable PROJECT SARATHI framework changes are documented here.
+
+## [0.7.1] - 2026-07-29
+
+### Added
+
+- Structured framework diagnostic contracts and reports.
+- Deterministic Framework Doctor orchestration.
+- Runtime, release-metadata, and framework-import checks.
+- Plain-text diagnostic rendering.
+- Native `doctor` developer CLI command.
+- Focused observability and Doctor CLI tests.
+
+### Changed
+
+- Expanded built-in commands from eight to nine.
+- Expanded the regression suite from 63 to 97 tests.
+
+### Verification
+
+- Focused Doctor CLI suite: 21 passed.
+- Complete regression suite: 97 passed.
+- Framework Doctor: 3 passed, 0 warnings, 0 failed.
+- Overall framework health: HEALTHY.
 
 ## [0.7.0] - 2026-07-29
 

@@ -1,4 +1,4 @@
-﻿# PROJECT SARATHI
+# PROJECT SARATHI
 
 > Enterprise-Grade Modular Intelligence and Application Framework
 
@@ -6,8 +6,8 @@
 
 | Item | Value |
 |------|-------|
-| Version | v0.7.0 |
-| Milestone | M12.1 - Extensible Developer CLI Architecture |
+| Version | v0.7.1 |
+| Milestone | M12.2 - Framework Observability |
 | Build Date | 29 July 2026 |
 | Status | Passing |
 
@@ -41,6 +41,8 @@ repository.
 - Explicit built-in command registration
 - Fail-fast repository verification
 - Thin executable composition entry point
+- Framework Doctor with structured diagnostics
+- Deterministic runtime, release-metadata, and import checks
 
 ## Developer CLI
 
@@ -58,6 +60,7 @@ python sarathi.py <command>
 | `test` | Run the complete pytest suite |
 | `compile` | Compile maintained Python locations |
 | `version` | Display authoritative version information |
+| `doctor` | Diagnose framework runtime and structural health |
 | `release` | Run the release gate |
 | `verify` | Run complete one-command repository verification |
 
@@ -112,16 +115,17 @@ Design
 
 ## Current Quality Status
 
-- Automated tests: 63 passed
-- Focused CLI tests: 47 passed
+- Automated tests: 97 passed
+- Focused Doctor CLI tests: 21 passed
 - Compilation: passed
-- Built-in CLI commands: 8
-- Architecture health: stable
+- Built-in CLI commands: 9
+- Framework Doctor: 3 passed, 0 warnings, 0 failed
+- Architecture health: healthy
 - Backward compatibility: preserved
 
 ## Next Milestone
 
-M12.2 - Framework Observability
+M12.3 - Repository Audit Engine
 
 ## License
 

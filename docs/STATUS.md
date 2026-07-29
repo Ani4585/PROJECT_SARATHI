@@ -1,4 +1,4 @@
-﻿# PROJECT SARATHI
+# PROJECT SARATHI
 
 > Live Engineering Dashboard
 
@@ -7,14 +7,14 @@
 | Item | Status |
 |------|--------|
 | Framework | PROJECT SARATHI |
-| Version | v0.7.0 |
-| Current Milestone | M12.1 - Extensible Developer CLI Architecture |
+| Version | v0.7.1 |
+| Current Milestone | M12.2 - Framework Observability |
 | Repository Status | Active Development |
 | Build Status | Passing |
-| Automated Tests | 63 / 63 passed |
-| Focused CLI Tests | 47 / 47 passed |
+| Automated Tests | 97 / 97 passed |
+| Focused Doctor CLI Tests | 21 / 21 passed |
 | Compilation | Passed |
-| Architecture Health | Stable |
+| Architecture Health | Healthy |
 
 ## Core Framework
 
@@ -56,6 +56,20 @@
 | Thin `sarathi.py` entry point | Complete |
 | End-to-end CLI tests | Complete |
 
+## Framework Observability
+
+| Component | Status |
+|-----------|--------|
+| Diagnostic contracts | Complete |
+| Diagnostic reports | Complete |
+| Deterministic Doctor orchestration | Complete |
+| Exception isolation | Complete |
+| Runtime compatibility check | Complete |
+| Release metadata check | Complete |
+| Framework import check | Complete |
+| Plain-text report renderer | Complete |
+| Doctor CLI integration | Complete |
+
 ## Built-In Commands
 
 | Command | Status |
@@ -66,6 +80,7 @@
 | `test` | Passing |
 | `compile` | Passing |
 | `version` | Passing |
+| `doctor` | Passing |
 | `release` | Passing |
 | `verify` | Passing |
 
@@ -78,7 +93,7 @@ python sarathi.py verify
 Successful verification must finish with:
 
 ```text
-MILESTONE 12.1 VERIFICATION COMPLETE
+MILESTONE 12.2 VERIFICATION COMPLETE
 READY FOR COMMIT
 ```
 
@@ -89,6 +104,7 @@ READY FOR COMMIT
 | M11 | v0.6.1 | Complete |
 | M11.5 | v0.6.2 | Complete |
 | M12.1 | v0.7.0 | Complete |
+| M12.2 | v0.7.1 | Complete |
 
 ## Technical Debt
 
@@ -96,6 +112,6 @@ Current level: Low
 
 ## Next Milestone
 
-M12.2 - Framework Observability
+M12.3 - Repository Audit Engine
 
 Last updated: 29 July 2026
