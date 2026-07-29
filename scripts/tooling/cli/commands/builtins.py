@@ -1,4 +1,4 @@
-﻿"""
+"""
 PROJECT SARATHI
 
 Developer CLI Built-in Registration
@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from ..registry import CommandRegistry
 from .compilation import CompilationCommand
+from .doctor import DoctorCommand
 from .script import ScriptCommand
 from .testing import TestCommand
 from .verification import VerificationCommand
@@ -71,6 +72,9 @@ def register_builtin_commands(
     )
     registry.register(
         VersionCommand()
+    )
+    registry.register(
+        DoctorCommand()
     )
     registry.register(
         VerificationCommand(registry)

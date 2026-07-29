@@ -1,4 +1,4 @@
-﻿"""
+"""
 Tests for the PROJECT SARATHI developer CLI entry point.
 """
 
@@ -126,6 +126,7 @@ def test_entrypoint_help_exposes_all_commands() -> None:
 
     for command_name in (
         "compile",
+        "doctor",
         "health",
         "release",
         "stats",
@@ -164,3 +165,18 @@ def test_entrypoint_rejects_unknown_command() -> None:
     assert result.returncode == 2
     assert "invalid choice" in result.stderr
     assert "missing" in result.stderr
+
+def test_entrypoint_executes_doctor_command() -> None:
+    """The executable should run the real Framework Doctor."""
+
+    result = run_entrypoint(
+        "doctor"
+    )
+
+    assert result.returncode == 0
+    assert "CLI - DOCTOR" in result.stdout
+    assert (
+        "Summary: 3 passed | 0 warnings | "
+        "0 failed | 3 total"
+    ) in result.stdout
+    assert "Overall: HEALTHY" in result.stdout

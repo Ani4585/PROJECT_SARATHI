@@ -1,4 +1,4 @@
-﻿"""
+"""
 Tests for built-in registration and composite CLI verification.
 """
 
@@ -241,6 +241,7 @@ def test_builtin_registry_exposes_all_commands() -> None:
 
     assert registry.names() == (
         "compile",
+        "doctor",
         "health",
         "release",
         "stats",
@@ -296,6 +297,7 @@ def test_builtin_registry_preserves_help_descriptions() -> None:
         "compile": (
             "Compile source, configuration, scripts, and tests."
         ),
+        "doctor": "Run framework diagnostics.",
         "health": (
             "Run automated tests and compilation checks."
         ),
@@ -347,6 +349,7 @@ def test_cli_factory_builds_every_subparser(
 
     for command_name in (
         "compile",
+        "doctor",
         "health",
         "release",
         "stats",
