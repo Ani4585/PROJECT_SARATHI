@@ -8,6 +8,6 @@ framework release and milestone information.
 """
 
 FRAMEWORK_NAME = "PROJECT SARATHI"
-VERSION = "0.7.2"
-MILESTONE = "M12.3"
+VERSION = "1.0.0"
+MILESTONE = "M20"
 BUILD_DATE = "2026-08-01"

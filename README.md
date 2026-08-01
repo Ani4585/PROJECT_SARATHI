@@ -6,9 +6,9 @@
 
 | Item | Value |
 |------|-------|
-| Version | v0.7.1 |
-| Milestone | M12.2 - Framework Observability |
-| Build Date | 29 July 2026 |
+| Version | v1.0.0 |
+| Milestone | M20 - Platform Kernel |
+| Build Date | 1 August 2026 |
 | Status | Passing |
 
 ## Vision
@@ -27,7 +27,14 @@ repository.
 
 ## Framework Capabilities
 
-- Centralized configuration
+- Layered, typed, and validated configuration
+- Failure-isolated domain events
+- Typed command and query messaging with middleware
+- Dependency-aware module runtime
+- Repository and unit-of-work persistence ports
+- Deterministic background job scheduling
+- Thread-safe operational metrics
+- Integrated platform kernel and health snapshots
 - Structured logging
 - Exception and error handling
 - Application lifecycle management
@@ -61,6 +68,7 @@ python sarathi.py <command>
 | `compile` | Compile maintained Python locations |
 | `version` | Display authoritative version information |
 | `doctor` | Diagnose framework runtime and structural health |
+| `audit` | Audit repository structure and integrity |
 | `release` | Run the release gate |
 | `verify` | Run complete one-command repository verification |
 
@@ -115,17 +123,17 @@ Design
 
 ## Current Quality Status
 
-- Automated tests: 97 passed
-- Focused Doctor CLI tests: 21 passed
+- Automated tests: 207 passed
+- Focused M13-M20 tests: 99 passed
 - Compilation: passed
-- Built-in CLI commands: 9
+- Built-in CLI commands: 10
 - Framework Doctor: 3 passed, 0 warnings, 0 failed
 - Architecture health: healthy
 - Backward compatibility: preserved
 
 ## Next Milestone
 
-M12.3 - Repository Audit Engine
+M21 - Production Adapters and API Surface
 
 ## License
 

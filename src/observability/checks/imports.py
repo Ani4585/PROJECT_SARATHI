@@ -20,11 +20,18 @@ from ..status import DiagnosticStatus
 
 DEFAULT_FRAMEWORK_MODULES = (
     "src.application",
+    "src.configuration",
     "src.container",
     "src.core",
+    "src.domain",
     "src.graph",
+    "src.jobs",
+    "src.kernel",
     "src.lifecycle",
+    "src.metrics",
+    "src.modules",
     "src.observability",
+    "src.persistence",
     "src.reflection",
 )
 

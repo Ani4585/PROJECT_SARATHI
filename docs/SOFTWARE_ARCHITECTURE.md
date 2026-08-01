@@ -2,13 +2,13 @@
 
 # Software Architecture Document (SAD)
 
-**Document Version:** 1.0.0
+**Document Version:** 2.0.0
 
-**Project Version:** v0.1.0-foundation
+**Project Version:** v1.0.0-platform-kernel
 
 **Status:** Active
 
-**Last Updated:** 2026-07-26
+**Last Updated:** 2026-08-01
 
 ---
 
@@ -252,3 +252,22 @@ A milestone is considered complete when:
 This architecture document is a living document.
 
 As PROJECT SARATHI evolves, this document should be updated whenever architectural decisions materially change the design or direction of the system.
+
+---
+
+# 17. Platform Kernel Capabilities
+
+The M20 platform kernel composes the following independently testable
+capabilities through the dependency-injection container:
+
+- Layered configuration
+- Domain event publication
+- Application command and query messaging
+- Dependency-aware modules
+- Persistence ports and in-memory adapters
+- Background job scheduling
+- Operational metrics
+- Lifecycle and health reporting
+
+The kernel is a composition boundary. Domain code remains independent of the
+kernel, infrastructure adapters, databases, and presentation layers.
