@@ -132,3 +132,11 @@ M12.3 - Repository Audit Engine
 Copyright 2026 PROJECT SARATHI TEAM.
 
 All Rights Reserved.
+
+## Repository Audit
+
+Validate the repository structure and Git integrity:
+
+```powershell
+python sarathi.py audit
+```

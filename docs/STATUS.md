@@ -7,8 +7,8 @@
 | Item | Status |
 |------|--------|
 | Framework | PROJECT SARATHI |
-| Version | v0.7.1 |
-| Current Milestone | M12.2 - Framework Observability |
+| Version | v0.7.2 |
+| Current Milestone | M12.3 - Framework Observability |
 | Repository Status | Active Development |
 | Build Status | Passing |
 | Automated Tests | 97 / 97 passed |
@@ -104,7 +104,7 @@ READY FOR COMMIT
 | M11 | v0.6.1 | Complete |
 | M11.5 | v0.6.2 | Complete |
 | M12.1 | v0.7.0 | Complete |
-| M12.2 | v0.7.1 | Complete |
+| M12.3 | v0.7.2 | Complete |
 
 ## Technical Debt
 
@@ -115,3 +115,10 @@ Current level: Low
 M12.3 - Repository Audit Engine
 
 Last updated: 29 July 2026
+
+## Current Milestone
+
+- Repository Audit Engine: COMPLETE
+- Audit checks: 5
+- Audit status: CLEAN
+- CLI command: `python sarathi.py audit`

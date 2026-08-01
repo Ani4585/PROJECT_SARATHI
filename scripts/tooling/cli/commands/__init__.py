@@ -8,6 +8,7 @@ PROJECT SARATHI developer tooling framework.
 """
 
 from .compilation import CompilationCommand
+from .audit import AuditCommand
 from .doctor import DoctorCommand
 from .script import ScriptCommand
 from .testing import TestCommand
@@ -16,6 +17,7 @@ from .version import VersionCommand
 
 __all__ = [
     "CompilationCommand",
+    "AuditCommand",
     "DoctorCommand",
     "ScriptCommand",
     "TestCommand",

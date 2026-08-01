@@ -10,6 +10,7 @@ PROJECT SARATHI developer tooling framework.
 from __future__ import annotations
 
 from ..registry import CommandRegistry
+from .audit import AuditCommand
 from .compilation import CompilationCommand
 from .doctor import DoctorCommand
 from .script import ScriptCommand
@@ -75,6 +76,9 @@ def register_builtin_commands(
     )
     registry.register(
         DoctorCommand()
+    )
+    registry.register(
+        AuditCommand()
     )
     registry.register(
         VerificationCommand(registry)

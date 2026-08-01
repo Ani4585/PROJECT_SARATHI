@@ -240,6 +240,7 @@ def test_builtin_registry_exposes_all_commands() -> None:
     registry = create_builtin_registry()
 
     assert registry.names() == (
+        "audit",
         "compile",
         "doctor",
         "health",
@@ -294,6 +295,7 @@ def test_builtin_registry_preserves_help_descriptions() -> None:
     }
 
     assert descriptions == {
+        "audit": "Audit repository structure and integrity.",
         "compile": (
             "Compile source, configuration, scripts, and tests."
         ),

@@ -100,3 +100,12 @@ All notable PROJECT SARATHI framework changes are documented here.
 
 - Validator integration with CycleDetector.
 - Dependency graph recording consistency.
+
+## 0.7.2 - M12.3 Repository Audit Engine
+
+- Added the reusable repository audit engine.
+- Added repository structure and integrity checks.
+- Added the native `sarathi.py audit` command.
+- Added CLI registration and help integration.
+- Added repository-audit and CLI-audit test coverage.
+- Added the M12.3 milestone documentation.
