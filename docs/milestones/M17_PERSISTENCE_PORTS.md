@@ -1,5 +1,8 @@
 # Milestone 17 - Persistence Ports
 
+> Superseded temporary label. This is preparatory work for official M30,
+> not completion of official M17 Architecture Decision Records.
+
 ## Release
 
 - Version: 0.12.0

@@ -61,3 +61,15 @@ def test_audit_command_renders_and_returns_health(
     assert renderer.reports == [report]
     assert "CLI - AUDIT" in output
     assert "rendered audit" in output
+
+
+def test_audit_command_can_render_json(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    command = AuditCommand(auditor=RecordingAuditor(make_report(True)))
+    context = CommandContext(tmp_path, sys.executable)
+    assert command.execute(context, Namespace(command="audit", format="json")) == 0
+    output = capsys.readouterr().out
+    assert '"clean": true' in output
+    assert "CLI - AUDIT" not in output

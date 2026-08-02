@@ -1,5 +1,8 @@
 # Milestone 15 - Application Messaging
 
+> Superseded temporary label. This is preparatory messaging infrastructure,
+> not completion of official M15 Performance Monitoring.
+
 ## Release
 
 - Version: 0.10.0

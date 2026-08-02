@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from collections.abc import Sequence
 
+from .coverage import DEFAULT_COVERAGE_THRESHOLD
 from .filesystem import (
     PROJECT_ROOT,
     required_file_status,
@@ -115,6 +116,102 @@ def run_tests(
     return run_command(
         command
     )
+
+
+def run_coverage(
+    *,
+    threshold: float = DEFAULT_COVERAGE_THRESHOLD,
+) -> CommandResult:
+    """Run tests with source coverage collection and threshold enforcement."""
+
+    return run_command(
+        [
+            sys.executable,
+            "scripts/coverage_report.py",
+            "--threshold",
+            str(threshold),
+        ]
+    )
+
+
+def run_benchmarks() -> CommandResult:
+    """Run the standard performance regression suite."""
+
+    return run_command(
+        [
+            sys.executable,
+            "sarathi.py",
+            "benchmark",
+        ]
+    )
+
+
+def run_developer_report() -> CommandResult:
+    """Generate and validate dependency, environment, and tooling reports."""
+
+    return run_command(
+        [
+            sys.executable,
+            "sarathi.py",
+            "report",
+            "--format",
+            "json",
+        ]
+    )
+
+
+def run_cli_plugin_audit() -> CommandResult:
+    """Verify installed CLI command extensions load cleanly."""
+
+    return run_command(
+        [
+            sys.executable,
+            "sarathi.py",
+            "plugins",
+            "--format",
+            "json",
+        ]
+    )
+
+
+def run_health_monitoring() -> CommandResult:
+    """Run all operational health groups with machine-readable output."""
+
+    return run_command(
+        [
+            sys.executable,
+            "sarathi.py",
+            "monitor",
+            "--format",
+            "json",
+        ]
+    )
+
+
+def run_runtime_diagnostics() -> CommandResult:
+    """Generate a redacted, safe-share runtime diagnostic bundle."""
+
+    return run_command(
+        [
+            sys.executable,
+            "sarathi.py",
+            "diagnostics",
+            "--format",
+            "json",
+        ]
+    )
+
+
+def run_adr_validation() -> CommandResult:
+    """Validate managed Architecture Decision Records and their links."""
+
+    return run_command([sys.executable, "sarathi.py", "adr", "validate"])
+
+
+def run_dashboard() -> CommandResult:
+    """Generate the unified dashboard and CI summary artifacts."""
+
+    return run_command([sys.executable, "sarathi.py", "dashboard", "--format", "json"])
 
 
 def run_compilation() -> CommandResult:

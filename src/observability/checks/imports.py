@@ -19,12 +19,17 @@ from ..status import DiagnosticStatus
 
 
 DEFAULT_FRAMEWORK_MODULES = (
+    "src.adr",
     "src.application",
+    "src.caching",
     "src.configuration",
     "src.container",
     "src.core",
     "src.domain",
+    "src.extensions",
     "src.graph",
+    "src.health",
+    "src.hooks",
     "src.jobs",
     "src.kernel",
     "src.lifecycle",
@@ -32,7 +37,13 @@ DEFAULT_FRAMEWORK_MODULES = (
     "src.modules",
     "src.observability",
     "src.persistence",
+    "src.performance",
+    "src.plugins",
     "src.reflection",
+    "src.runtime_diagnostics",
+    "src.resources",
+    "src.serialization",
+    "src.secrets",
 )
 
 

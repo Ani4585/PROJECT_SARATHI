@@ -92,6 +92,16 @@ class CommandRegistry:
                 f"Command not registered: {name}"
             ) from error
 
+    def unregister(self, name: str) -> Command:
+        """Remove and return one command registration."""
+
+        try:
+            return self._commands.pop(name)
+        except KeyError as error:
+            raise CommandNotFoundError(
+                f"Command not registered: {name}"
+            ) from error
+
     def contains(
         self,
         name: str,

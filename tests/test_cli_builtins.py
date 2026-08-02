@@ -240,11 +240,19 @@ def test_builtin_registry_exposes_all_commands() -> None:
     registry = create_builtin_registry()
 
     assert registry.names() == (
+        "adr",
         "audit",
+        "benchmark",
         "compile",
+        "coverage",
+        "dashboard",
+        "diagnostics",
         "doctor",
         "health",
+        "monitor",
+        "plugins",
         "release",
+        "report",
         "stats",
         "status",
         "test",
@@ -295,15 +303,23 @@ def test_builtin_registry_preserves_help_descriptions() -> None:
     }
 
     assert descriptions == {
+        "adr": "Create and manage architecture decision records.",
         "audit": "Audit repository structure and integrity.",
+        "benchmark": "Run benchmarks and detect performance regressions.",
         "compile": (
             "Compile source, configuration, scripts, and tests."
         ),
+        "coverage": "Collect source coverage and enforce its threshold.",
+        "dashboard": "Generate the unified developer dashboard.",
+        "diagnostics": "Generate a redacted runtime diagnostic bundle.",
         "doctor": "Run framework diagnostics.",
         "health": (
             "Run automated tests and compilation checks."
         ),
+        "monitor": "Run grouped operational health checks.",
+        "plugins": "Inspect installed CLI command extensions.",
         "release": "Run the release gate.",
+        "report": "Generate dependency, environment, and tooling reports.",
         "stats": "Display repository statistics.",
         "status": (
             "Display framework, repository, and Git status."
@@ -351,9 +367,16 @@ def test_cli_factory_builds_every_subparser(
 
     for command_name in (
         "compile",
+        "benchmark",
+        "coverage",
+        "dashboard",
+        "diagnostics",
         "doctor",
         "health",
+        "monitor",
+        "plugins",
         "release",
+        "report",
         "stats",
         "status",
         "test",
@@ -365,6 +388,10 @@ def test_cli_factory_builds_every_subparser(
         )
 
         assert arguments.command == command_name
+
+    adr_arguments = parser.parse_args(["adr", "list"])
+    assert adr_arguments.command == "adr"
+    assert adr_arguments.adr_action == "list"
 
 
 def test_cli_factory_dispatches_version_command(

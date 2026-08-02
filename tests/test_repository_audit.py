@@ -7,11 +7,16 @@ from pathlib import Path
 import pytest
 
 from scripts.tooling.audit import (
+    AuditJsonRenderer,
     AuditReportRenderer,
     AuditResult,
     RepositoryAuditor,
     check_python_sources,
     check_repository_root,
+    check_composition_roots,
+    check_domain_boundaries,
+    check_official_roadmap,
+    check_python_syntax,
 )
 
 
@@ -76,3 +81,41 @@ def test_audit_renderer_reports_failure() -> None:
     rendered = AuditReportRenderer().render(report)
     assert "[FAIL] check" in rendered
     assert "Overall: ISSUES FOUND" in rendered
+
+
+def test_audit_report_supports_machine_readable_output() -> None:
+    report = RepositoryAuditor((lambda root: AuditResult("check", True, "Passed."),)).run(Path.cwd())
+    rendered = AuditJsonRenderer().render(report)
+    assert '"clean": true' in rendered
+    assert '"name": "check"' in rendered
+
+
+def test_python_syntax_check_reports_parse_failures(tmp_path: Path) -> None:
+    source = tmp_path / "src"
+    source.mkdir()
+    (source / "broken.py").write_text("if:\n", encoding="utf-8")
+    result = check_python_syntax(tmp_path)
+    assert result.passed is False
+    assert "SyntaxError" in result.details[0]
+
+
+def test_domain_boundary_check_rejects_outward_import(tmp_path: Path) -> None:
+    domain = tmp_path / "src" / "domain"
+    domain.mkdir(parents=True)
+    (domain / "model.py").write_text("from src.infrastructure import database\n", encoding="utf-8")
+    result = check_domain_boundaries(tmp_path)
+    assert result.passed is False
+    assert "src.infrastructure" in result.details[0]
+
+
+def test_composition_root_check_accepts_thin_entry_points(tmp_path: Path) -> None:
+    (tmp_path / "main.py").write_text("def main():\n    return 0\n", encoding="utf-8")
+    (tmp_path / "sarathi.py").write_text("def main():\n    return 0\n", encoding="utf-8-sig")
+    assert check_composition_roots(tmp_path).passed is True
+
+
+def test_official_roadmap_check_requires_nonempty_file(tmp_path: Path) -> None:
+    roadmap = tmp_path / "docs" / "project_sarathi_master_roadmap.html"
+    roadmap.parent.mkdir()
+    roadmap.write_text("roadmap", encoding="utf-8")
+    assert check_official_roadmap(tmp_path).passed is True

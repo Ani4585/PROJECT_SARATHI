@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from argparse import Namespace
+from argparse import ArgumentParser, Namespace
 from typing import Protocol
 
-from scripts.tooling.audit import AuditReport, AuditReportRenderer, create_repository_auditor
+from scripts.tooling.audit import AuditJsonRenderer, AuditReport, AuditReportRenderer, create_repository_auditor
 
 from ...console import print_header
 from ..command import Command
@@ -35,9 +35,19 @@ class AuditCommand(Command):
     def description(self) -> str:
         return "Audit repository structure and integrity."
 
+    def configure_parser(self, parser: ArgumentParser) -> None:
+        parser.add_argument(
+            "--format",
+            choices=("text", "json"),
+            default="text",
+            help="Audit output format.",
+        )
+
     def execute(self, context: CommandContext, arguments: Namespace) -> int:
-        del arguments
-        print_header("CLI - AUDIT")
+        output_format = getattr(arguments, "format", "text")
+        if output_format == "text":
+            print_header("CLI - AUDIT")
         report = self._auditor.run(context.project_root)
-        print(self._renderer.render(report))
+        renderer = AuditJsonRenderer() if output_format == "json" else self._renderer
+        print(renderer.render(report))
         return 0 if report.passed else 1

@@ -43,3 +43,12 @@ class ModuleStartupError(ModuleError):
             error_code="MODULE_STARTUP_FAILED",
             details={"module": module, "reason": reason},
         )
+
+
+class ModuleReloadError(ModuleError):
+    def __init__(self, module: str, reason: str) -> None:
+        super().__init__(
+            f"Module {module!r} cannot be reloaded: {reason}",
+            error_code="MODULE_RELOAD_REJECTED",
+            details={"module": module, "reason": reason},
+        )

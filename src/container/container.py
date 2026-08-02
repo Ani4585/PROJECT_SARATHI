@@ -93,6 +93,11 @@ class ServiceContainer:
         creating a ServiceDescriptor.
         """
 
+        if service_type in self._typed_services:
+            from .exceptions import ServiceAlreadyRegisteredError
+
+            raise ServiceAlreadyRegisteredError(service_type.__name__)
+
         self._typed_services[
             service_type
         ] = instance
@@ -126,6 +131,21 @@ class ServiceContainer:
             lifetime=lifetime,
         )
 
+    def unregister(self, name: str) -> None:
+        """Remove a named service registration."""
+
+        with self._lock:
+            self._registry.unregister(name)
+
+    def unregister_type(self, service_type: type) -> None:
+        """Remove a typed service registration and its descriptor."""
+
+        with self._lock:
+            if service_type not in self._typed_services:
+                raise KeyError(f"Service type {service_type.__name__} is not registered.")
+            del self._typed_services[service_type]
+            self._service_descriptors.pop(service_type, None)
+
     # --------------------------------------------------
     # Descriptor API
     # --------------------------------------------------
@@ -141,6 +161,22 @@ class ServiceContainer:
         return self._service_descriptors.get(
             service_type
         )
+
+    def service_descriptors(self) -> tuple[ServiceDescriptor, ...]:
+        """Return typed registrations in deterministic service-name order."""
+
+        return tuple(
+            sorted(
+                self._service_descriptors.values(),
+                key=lambda descriptor: descriptor.service_type.__name__,
+            )
+        )
+
+    @property
+    def dependency_graph(self):
+        """Expose the read-only dependency graph surface for diagnostics."""
+
+        return self._graph_recorder.graph
 
     def cache_constructor_dependencies(
         self,

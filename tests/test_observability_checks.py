@@ -68,9 +68,9 @@ def test_version_metadata_check_accepts_current_release() -> None:
     assert result.status is DiagnosticStatus.PASS
     assert result.details == (
         "Framework: PROJECT SARATHI",
-        "Version: 1.0.0",
-        "Milestone: M20",
-        "Build date: 2026-08-01",
+        "Version: 0.8.17",
+        "Milestone: M30",
+        "Build date: 2026-08-02",
     )
 
 

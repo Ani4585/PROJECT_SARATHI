@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import ast
+import json
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from pathlib import Path
@@ -30,6 +32,16 @@ class AuditResult:
         object.__setattr__(self, "summary", summary)
         object.__setattr__(self, "details", details)
 
+    def to_dict(self) -> dict[str, object]:
+        """Return a machine-readable result."""
+
+        return {
+            "name": self.name,
+            "passed": self.passed,
+            "summary": self.summary,
+            "details": list(self.details),
+        }
+
 
 @dataclass(frozen=True, slots=True)
 class AuditReport:
@@ -53,6 +65,20 @@ class AuditReport:
     @property
     def passed(self) -> bool:
         return self.failed_checks == 0
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a machine-readable report."""
+
+        return {
+            "title": self.title,
+            "summary": {
+                "passed": self.passed_checks,
+                "failed": self.failed_checks,
+                "total": self.total_checks,
+                "clean": self.passed,
+            },
+            "results": [result.to_dict() for result in self.results],
+        }
 
 
 AuditCheck = Callable[[Path], AuditResult]
@@ -142,8 +168,115 @@ def check_git_repository(root: Path) -> AuditResult:
     )
 
 
+def _python_files(root: Path) -> tuple[Path, ...]:
+    return tuple(sorted((root / "src").rglob("*.py"))) if (root / "src").is_dir() else ()
+
+
+def check_python_syntax(root: Path) -> AuditResult:
+    """Parse every maintained source file and report syntax failures."""
+
+    failures: list[str] = []
+    files = _python_files(root)
+    for path in files:
+        try:
+            ast.parse(path.read_text(encoding="utf-8-sig"), filename=str(path))
+        except (OSError, SyntaxError, UnicodeError) as error:
+            failures.append(f"{path.relative_to(root)}: {type(error).__name__}: {error}")
+    return AuditResult(
+        name="python-syntax",
+        passed=not failures and bool(files),
+        summary="All Python sources parsed successfully." if not failures and files else "Python source parsing failed.",
+        details=tuple(failures) if failures else (f"Files parsed: {len(files)}",),
+    )
+
+
+FORBIDDEN_DOMAIN_IMPORTS = (
+    "config",
+    "scripts",
+    "src.application",
+    "src.container",
+    "src.infrastructure",
+    "src.kernel",
+)
+
+
+def _imported_modules(tree: ast.AST) -> tuple[str, ...]:
+    modules: list[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            modules.extend(alias.name for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            modules.append(node.module)
+    return tuple(modules)
+
+
+def check_domain_boundaries(root: Path) -> AuditResult:
+    """Enforce the inward-only dependency rule for domain code."""
+
+    domain = root / "src" / "domain"
+    files = tuple(sorted(domain.rglob("*.py"))) if domain.is_dir() else ()
+    violations: list[str] = []
+    for path in files:
+        tree = ast.parse(path.read_text(encoding="utf-8-sig"), filename=str(path))
+        for module in _imported_modules(tree):
+            if any(module == forbidden or module.startswith(forbidden + ".") for forbidden in FORBIDDEN_DOMAIN_IMPORTS):
+                violations.append(f"{path.relative_to(root)} imports {module}")
+    return AuditResult(
+        name="domain-boundaries",
+        passed=not violations,
+        summary="Domain dependency boundaries are clean." if not violations else "Domain dependency violations were found.",
+        details=tuple(violations) if violations else (f"Files checked: {len(files)}",),
+    )
+
+
+def check_composition_roots(root: Path) -> AuditResult:
+    """Ensure executable composition roots remain small and declarative."""
+
+    violations: list[str] = []
+    checked = 0
+    for relative in ("main.py", "sarathi.py"):
+        path = root / relative
+        if not path.is_file():
+            violations.append(f"Missing: {relative}")
+            continue
+        checked += 1
+        tree = ast.parse(path.read_text(encoding="utf-8-sig"), filename=str(path))
+        main_functions = [
+            node for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "main"
+        ]
+        if len(main_functions) != 1:
+            violations.append(f"{relative}: expected exactly one main function")
+            continue
+        operational_statements = sum(
+            isinstance(node, ast.stmt)
+            for statement in main_functions[0].body
+            for node in ast.walk(statement)
+        )
+        if operational_statements > 8:
+            violations.append(f"{relative}: main contains {operational_statements} statements (maximum 8)")
+    return AuditResult(
+        name="composition-roots",
+        passed=not violations and checked == 2,
+        summary="Composition roots are thin." if not violations and checked == 2 else "Composition roots require attention.",
+        details=tuple(violations) if violations else (f"Entry points checked: {checked}",),
+    )
+
+
+def check_official_roadmap(root: Path) -> AuditResult:
+    """Ensure the authoritative programme source is repository-managed."""
+
+    path = root / "docs" / "project_sarathi_master_roadmap.html"
+    passed = path.is_file() and path.stat().st_size > 0
+    return AuditResult(
+        name="official-roadmap",
+        passed=passed,
+        summary="The official master roadmap is available." if passed else "The official master roadmap is missing or empty.",
+        details=(f"Path: {path.relative_to(root)}",),
+    )
+
+
 def create_repository_auditor() -> RepositoryAuditor:
-    """Create the standard deterministic five-check repository auditor."""
+    """Create the standard deterministic repository and architecture auditor."""
 
     return RepositoryAuditor(
         (
@@ -152,6 +285,10 @@ def create_repository_auditor() -> RepositoryAuditor:
             check_required_files,
             check_python_sources,
             check_git_repository,
+            check_python_syntax,
+            check_domain_boundaries,
+            check_composition_roots,
+            check_official_roadmap,
         )
     )
 
@@ -173,3 +310,10 @@ class AuditReportRenderer:
             )
         )
         return "\n".join(lines)
+
+
+class AuditJsonRenderer:
+    """Render a repository audit as stable JSON."""
+
+    def render(self, report: AuditReport) -> str:
+        return json.dumps(report.to_dict(), indent=2)

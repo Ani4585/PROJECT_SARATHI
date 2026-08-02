@@ -6,6 +6,7 @@ from enum import Enum
 from typing import Protocol, Self
 
 from .memory import InMemoryRepository
+from .contracts import PersistenceSession, SessionFactory
 
 
 class UnitOfWork(Protocol):
@@ -29,6 +30,7 @@ class UnitOfWorkState(Enum):
     ACTIVE = "ACTIVE"
     COMMITTED = "COMMITTED"
     ROLLED_BACK = "ROLLED_BACK"
+    FAILED = "FAILED"
 
 
 class InMemoryUnitOfWork:
@@ -93,3 +95,68 @@ class InMemoryUnitOfWork:
     def _require_active(self) -> None:
         if self._state is not UnitOfWorkState.ACTIVE:
             raise RuntimeError("Unit of work is not active.")
+
+
+class SessionUnitOfWork:
+    """Coordinate an adapter-provided transactional persistence session."""
+
+    def __init__(self, session_factory: SessionFactory) -> None:
+        if not isinstance(session_factory, SessionFactory):
+            raise TypeError("Session unit of work requires a session factory.")
+        self._session_factory = session_factory
+        self._session: PersistenceSession | None = None
+        self._state = UnitOfWorkState.READY
+
+    @property
+    def state(self) -> UnitOfWorkState:
+        return self._state
+
+    @property
+    def session(self) -> PersistenceSession:
+        if self._state is not UnitOfWorkState.ACTIVE or self._session is None:
+            raise RuntimeError("Unit of work is not active.")
+        return self._session
+
+    def repository(self, name: str, identity):
+        return self.session.repository(name, identity)
+
+    def __enter__(self) -> "SessionUnitOfWork":
+        if self._state is UnitOfWorkState.ACTIVE:
+            raise RuntimeError("Unit of work is already active.")
+        self._session = self._session_factory.open_session()
+        try:
+            self._session.begin()
+        except Exception:
+            self._session.close()
+            self._session = None
+            raise
+        self._state = UnitOfWorkState.ACTIVE
+        return self
+
+    def commit(self) -> None:
+        session = self.session
+        try:
+            session.commit()
+        except Exception:
+            self._state = UnitOfWorkState.FAILED
+            raise
+        self._state = UnitOfWorkState.COMMITTED
+
+    def rollback(self) -> None:
+        session = self.session
+        session.rollback()
+        self._state = UnitOfWorkState.ROLLED_BACK
+
+    def __exit__(self, exc_type, exc_value, traceback) -> bool:
+        del exc_value, traceback
+        try:
+            if self._state is UnitOfWorkState.ACTIVE:
+                if exc_type is None:
+                    self.commit()
+                else:
+                    self.rollback()
+        finally:
+            if self._session is not None:
+                self._session.close()
+                self._session = None
+        return False

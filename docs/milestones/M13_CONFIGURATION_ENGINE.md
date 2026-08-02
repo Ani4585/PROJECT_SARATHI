@@ -1,5 +1,8 @@
 # Milestone 13 - Layered Configuration Engine
 
+> Superseded temporary label. This is preparatory work for official M25,
+> not completion of official M13 Observability Core.
+
 ## Release
 
 - Version: 0.8.0

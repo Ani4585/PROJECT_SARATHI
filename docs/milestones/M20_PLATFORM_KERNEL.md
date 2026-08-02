@@ -1,5 +1,8 @@
 # Milestone 20 - Platform Kernel
 
+> Superseded temporary label. This is preparatory integration infrastructure,
+> not completion of official M20 Extension Framework.
+
 ## Release
 
 - Version: 1.0.0

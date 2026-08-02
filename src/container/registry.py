@@ -70,6 +70,16 @@ class ServiceRegistry:
 
         return name in self._services
 
+    def unregister(self, name: str) -> ServiceDefinition:
+        """Remove and return one service definition."""
+
+        from .exceptions import ServiceNotFoundError
+
+        try:
+            return self._services.pop(name)
+        except KeyError as error:
+            raise ServiceNotFoundError(name) from error
+
     def list_services(self):
 
         return sorted(self._services.keys())

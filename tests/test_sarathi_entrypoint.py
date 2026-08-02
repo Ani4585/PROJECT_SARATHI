@@ -125,10 +125,18 @@ def test_entrypoint_help_exposes_all_commands() -> None:
     assert result.returncode == 0
 
     for command_name in (
+        "adr",
         "compile",
+        "benchmark",
+        "coverage",
+        "dashboard",
+        "diagnostics",
         "doctor",
         "health",
+        "monitor",
+        "plugins",
         "release",
+        "report",
         "stats",
         "status",
         "test",

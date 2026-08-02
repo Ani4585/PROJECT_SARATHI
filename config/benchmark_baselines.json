@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "python": "3.14",
+  "benchmarks": {
+    "constructor-inspection": 0.002,
+    "dependency-graph-build": 0.002,
+    "repository-source-discovery": 0.1
+  }
+}

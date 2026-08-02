@@ -25,3 +25,23 @@ class EntityNotFoundError(PersistenceError):
             error_code="ENTITY_NOT_FOUND",
             details={"identifier": identifier},
         )
+
+
+class PersistenceConfigurationError(PersistenceError):
+    pass
+
+
+class PersistenceConnectionError(PersistenceError):
+    pass
+
+
+class PersistenceSessionError(PersistenceError):
+    pass
+
+
+class TransactionConflictError(PersistenceSessionError):
+    pass
+
+
+class ActiveSessionError(PersistenceConnectionError):
+    pass

@@ -11,7 +11,16 @@ from __future__ import annotations
 
 from ..registry import CommandRegistry
 from .audit import AuditCommand
+from .benchmark import BenchmarkCommand
+from .report import ReportCommand
+from .plugins import PluginsCommand
+from .monitor import MonitorCommand
+from .diagnostics import DiagnosticsCommand
+from .adr import AdrCommand
+from .dashboard import DashboardCommand
+from ..plugins import CliPluginLoader
 from .compilation import CompilationCommand
+from .coverage import CoverageCommand
 from .doctor import DoctorCommand
 from .script import ScriptCommand
 from .testing import TestCommand
@@ -45,6 +54,7 @@ SCRIPT_COMMAND_DEFINITIONS = (
 
 def register_builtin_commands(
     registry: CommandRegistry,
+    plugin_loader: CliPluginLoader | None = None,
 ) -> None:
     """Register all standard PROJECT SARATHI CLI commands.
 
@@ -72,6 +82,9 @@ def register_builtin_commands(
         CompilationCommand()
     )
     registry.register(
+        CoverageCommand()
+    )
+    registry.register(
         VersionCommand()
     )
     registry.register(
@@ -81,11 +94,32 @@ def register_builtin_commands(
         AuditCommand()
     )
     registry.register(
+        BenchmarkCommand()
+    )
+    registry.register(
+        ReportCommand()
+    )
+    registry.register(
+        PluginsCommand(plugin_loader or CliPluginLoader(lambda: ()))
+    )
+    registry.register(
+        MonitorCommand()
+    )
+    registry.register(
+        DiagnosticsCommand()
+    )
+    registry.register(
+        AdrCommand()
+    )
+    registry.register(
+        DashboardCommand()
+    )
+    registry.register(
         VerificationCommand(registry)
     )
 
 
-def create_builtin_registry() -> CommandRegistry:
+def create_builtin_registry(plugin_loader: CliPluginLoader | None = None) -> CommandRegistry:
     """Create a registry containing all built-in commands.
 
     Returns:
@@ -93,9 +127,13 @@ def create_builtin_registry() -> CommandRegistry:
     """
 
     registry = CommandRegistry()
+    resolved_plugin_loader = plugin_loader or CliPluginLoader()
 
     register_builtin_commands(
-        registry
+        registry,
+        resolved_plugin_loader,
     )
+
+    resolved_plugin_loader.load_into(registry)
 
     return registry

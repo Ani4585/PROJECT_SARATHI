@@ -10,6 +10,7 @@ class MetricKind(Enum):
     COUNTER = "counter"
     GAUGE = "gauge"
     DISTRIBUTION = "distribution"
+    HISTOGRAM = "histogram"
 
 
 @dataclass(frozen=True, slots=True, order=True)
@@ -30,6 +31,7 @@ class MetricSample:
     count: int = 0
     minimum: float | None = None
     maximum: float | None = None
+    buckets: tuple[tuple[float, int], ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

@@ -16,6 +16,11 @@ are pushed.
 - [ ] Complete regression suite passes
 - [ ] No unexpected skipped tests
 - [ ] Process exit codes propagate correctly
+- [ ] Source coverage meets or exceeds the configured 85% threshold
+- [ ] JSON and HTML coverage reports are generated
+- [ ] Standard benchmarks remain within their versioned regression baselines
+- [ ] Dependency, environment, and tooling reports generate without failures
+- [ ] Installed CLI extensions satisfy the command contract and load without failures
 
 ## Architecture
 
@@ -24,6 +29,7 @@ are pushed.
 - [ ] Public command contracts remain stable
 - [ ] New components have focused tests
 - [ ] Composition roots remain thin
+- [ ] Repository and architecture audit passes
 
 ## Documentation
 

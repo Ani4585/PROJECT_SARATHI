@@ -1,5 +1,8 @@
 # Milestone 19 - Metrics Engine
 
+> Superseded temporary label. This is partial preparatory work for official
+> M13 Observability Core, not completion of official M19 Plugin Foundation.
+
 ## Release
 
 - Version: 0.14.0

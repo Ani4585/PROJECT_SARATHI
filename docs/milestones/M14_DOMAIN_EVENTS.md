@@ -1,5 +1,8 @@
 # Milestone 14 - Domain Event System
 
+> Superseded temporary label. This is preparatory work for official M41,
+> not completion of official M14 Health Monitoring.
+
 ## Release
 
 - Version: 0.9.0

@@ -17,3 +17,9 @@ logs/*.log
 
 # Environment variables
 .env
+
+# Generated coverage reports
+reports/coverage/
+reports/developer/
+reports/diagnostics/
+reports/dashboard/

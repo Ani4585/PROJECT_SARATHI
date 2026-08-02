@@ -27,6 +27,10 @@ from .renderer import (
 from .report import DiagnosticReport
 from .result import DiagnosticResult
 from .status import DiagnosticStatus
+from .contracts import EventSink, MetricRecorder, SpanTracer
+from .events import DiagnosticEvent, DiagnosticEventPublisher, EventPublication, NoOpEventPublisher
+from .exporters import InMemoryEventExporter, InMemorySpanExporter, JsonMetricsExporter, NoOpExporter
+from .tracing import NoOpTracer, SpanContext, SpanRecord, SpanStatus, Tracer
 
 __all__ = [
     "DEFAULT_FRAMEWORK_MODULES",
@@ -36,9 +40,25 @@ __all__ = [
     "DiagnosticReportRenderer",
     "DiagnosticResult",
     "DiagnosticStatus",
+    "DiagnosticEvent",
+    "DiagnosticEventPublisher",
+    "EventPublication",
+    "EventSink",
     "FrameworkDoctor",
+    "InMemorySpanExporter",
+    "InMemoryEventExporter",
+    "JsonMetricsExporter",
+    "MetricRecorder",
     "ModuleImportCheck",
+    "NoOpEventPublisher",
+    "NoOpExporter",
+    "NoOpTracer",
     "PythonRuntimeCheck",
+    "SpanContext",
+    "SpanRecord",
+    "SpanStatus",
+    "SpanTracer",
+    "Tracer",
     "VersionMetadataCheck",
     "create_default_checks",
     "create_framework_doctor",

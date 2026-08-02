@@ -47,6 +47,7 @@ class MetricsRegistry:
         self._counters: dict[MetricKey, float] = {}
         self._gauges: dict[MetricKey, float] = {}
         self._distributions: dict[MetricKey, _Distribution] = {}
+        self._histograms: dict[MetricKey, tuple[tuple[float, ...], _Distribution, list[int]]] = {}
         self._lock = RLock()
 
     def increment(
@@ -86,6 +87,32 @@ class MetricsRegistry:
         with self._lock:
             self._distributions.setdefault(key, _Distribution()).observe(numeric)
 
+    def observe_histogram(
+        self,
+        name: str,
+        value: float,
+        buckets: tuple[float, ...] = (0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0),
+        labels: Mapping[str, object] | None = None,
+    ) -> None:
+        """Record a value in deterministic cumulative histogram buckets."""
+
+        boundaries = tuple(sorted({float(boundary) for boundary in buckets}))
+        if not boundaries:
+            raise ValueError("Histogram buckets must not be empty.")
+        key = _key(name, labels)
+        numeric = float(value)
+        with self._lock:
+            existing = self._histograms.get(key)
+            if existing is None:
+                existing = (boundaries, _Distribution(), [0] * len(boundaries))
+                self._histograms[key] = existing
+            elif existing[0] != boundaries:
+                raise ValueError("Histogram bucket boundaries must remain stable for a metric series.")
+            existing[1].observe(numeric)
+            for index, boundary in enumerate(boundaries):
+                if numeric <= boundary:
+                    existing[2][index] += 1
+
     @contextmanager
     def timer(
         self,
@@ -121,6 +148,18 @@ class MetricsRegistry:
                 )
                 for key, distribution in self._distributions.items()
             )
+            samples.extend(
+                MetricSample(
+                    key,
+                    MetricKind.HISTOGRAM,
+                    value=distribution.total,
+                    count=distribution.count,
+                    minimum=distribution.minimum,
+                    maximum=distribution.maximum,
+                    buckets=tuple(zip(boundaries, counts, strict=True)),
+                )
+                for key, (boundaries, distribution, counts) in self._histograms.items()
+            )
         return MetricsSnapshot(tuple(sorted(samples, key=lambda sample: (sample.key, sample.kind.value))))
 
     def clear(self) -> None:
@@ -128,3 +167,33 @@ class MetricsRegistry:
             self._counters.clear()
             self._gauges.clear()
             self._distributions.clear()
+            self._histograms.clear()
+
+
+class NoOpMetricsRegistry:
+    """Provide the metrics API with zero recording overhead or retained state."""
+
+    def increment(self, name: str, amount: float = 1.0, labels=None) -> float:
+        del name, labels
+        return float(amount)
+
+    def set_gauge(self, name: str, value: float, labels=None) -> float:
+        del name, labels
+        return float(value)
+
+    def observe(self, name: str, value: float, labels=None) -> None:
+        del name, value, labels
+
+    def observe_histogram(self, name: str, value: float, buckets=(), labels=None) -> None:
+        del name, value, buckets, labels
+
+    @contextmanager
+    def timer(self, name: str, labels=None) -> Iterator[None]:
+        del name, labels
+        yield
+
+    def snapshot(self) -> MetricsSnapshot:
+        return MetricsSnapshot(())
+
+    def clear(self) -> None:
+        return None

@@ -18,7 +18,14 @@ from tooling import (
     print_section,
     print_verdict,
     run_compilation,
-    run_tests,
+    run_benchmarks,
+    run_developer_report,
+    run_cli_plugin_audit,
+    run_health_monitoring,
+    run_runtime_diagnostics,
+    run_adr_validation,
+    run_dashboard,
+    run_coverage,
     validate_version_information,
     verify_required_files,
 )
@@ -36,6 +43,16 @@ REQUIRED_FILES = (
     "scripts/project_status.py",
     "scripts/repository_stats.py",
     "scripts/release_gate.py",
+    "scripts/coverage_report.py",
+    "scripts/tooling/coverage.py",
+    "scripts/tooling/benchmark.py",
+    "scripts/tooling/developer_report.py",
+    "scripts/tooling/cli/plugins.py",
+    "src/health/__init__.py",
+    "src/runtime_diagnostics/__init__.py",
+    "docs/adr/README.md",
+    "scripts/tooling/dashboard.py",
+    "config/benchmark_baselines.json",
     "scripts/tooling/__init__.py",
     "scripts/tooling/console.py",
     "scripts/tooling/filesystem.py",
@@ -116,26 +133,134 @@ def main() -> int:
         )
 
     print_section(
-        "Automated Tests"
+        "Automated Tests and Coverage"
     )
 
-    test_result = run_tests(
-        verbose=True
-    )
+    test_result = run_coverage()
 
     print_result(
-        "Unit Tests",
+        "Tests and Coverage",
         test_result.passed,
     )
 
     report.add(
-        name="Unit Tests",
+        name="Tests and Coverage",
         passed=test_result.passed,
         details=(
             None
             if test_result.passed
             else f"Exit code {test_result.return_code}"
         ),
+    )
+
+    print_section(
+        "Performance Regression"
+    )
+
+    benchmark_result = run_benchmarks()
+
+    print_result(
+        "Benchmarks",
+        benchmark_result.passed,
+    )
+
+    report.add(
+        name="Benchmarks",
+        passed=benchmark_result.passed,
+        details=(
+            None
+            if benchmark_result.passed
+            else f"Exit code {benchmark_result.return_code}"
+        ),
+    )
+
+    print_section(
+        "Developer Environment"
+    )
+
+    developer_report_result = run_developer_report()
+
+    print_result(
+        "Dependency, Environment, and Tooling Reports",
+        developer_report_result.passed,
+    )
+
+    report.add(
+        name="Developer Reports",
+        passed=developer_report_result.passed,
+        details=(
+            None
+            if developer_report_result.passed
+            else f"Exit code {developer_report_result.return_code}"
+        ),
+    )
+
+    print_section(
+        "CLI Extensions"
+    )
+
+    plugin_result = run_cli_plugin_audit()
+
+    print_result(
+        "CLI Plugin Discovery",
+        plugin_result.passed,
+    )
+
+    report.add(
+        name="CLI Plugin Discovery",
+        passed=plugin_result.passed,
+        details=(
+            None
+            if plugin_result.passed
+            else f"Exit code {plugin_result.return_code}"
+        ),
+    )
+
+    print_section(
+        "Operational Health"
+    )
+
+    health_result = run_health_monitoring()
+
+    print_result(
+        "Liveness, Readiness, and Startup Health",
+        health_result.passed,
+    )
+
+    report.add(
+        name="Operational Health",
+        passed=health_result.passed,
+        details=(None if health_result.passed else f"Exit code {health_result.return_code}"),
+    )
+
+    print_section(
+        "Runtime Diagnostics"
+    )
+
+    diagnostics_result = run_runtime_diagnostics()
+    print_result("Safe-share Diagnostic Bundle", diagnostics_result.passed)
+    report.add(
+        name="Runtime Diagnostics",
+        passed=diagnostics_result.passed,
+        details=(None if diagnostics_result.passed else f"Exit code {diagnostics_result.return_code}"),
+    )
+
+    print_section("Architecture Decisions")
+    adr_result = run_adr_validation()
+    print_result("ADR Metadata and Links", adr_result.passed)
+    report.add(
+        name="Architecture Decisions",
+        passed=adr_result.passed,
+        details=(None if adr_result.passed else f"Exit code {adr_result.return_code}"),
+    )
+
+    print_section("Developer Dashboard")
+    dashboard_result = run_dashboard()
+    print_result("Dashboard and CI Summary", dashboard_result.passed)
+    report.add(
+        name="Developer Dashboard",
+        passed=dashboard_result.passed,
+        details=(None if dashboard_result.passed else f"Exit code {dashboard_result.return_code}"),
     )
 
     print_section(

@@ -1,4 +1,4 @@
-"""Tests for the M19 metrics engine."""
+"""Tests for the in-process metrics component used by official M13."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
-from src.metrics import MetricKind, MetricsRegistry
+from src.metrics import MetricKind, MetricsRegistry, NoOpMetricsRegistry
 
 
 def test_counter_increments_and_returns_current_value() -> None:
@@ -102,4 +102,33 @@ def test_clear_removes_every_metric_kind() -> None:
     metrics.set_gauge("gauge", 1)
     metrics.observe("distribution", 1)
     metrics.clear()
+    assert metrics.snapshot().samples == ()
+
+
+def test_histogram_records_cumulative_buckets() -> None:
+    metrics = MetricsRegistry()
+    metrics.observe_histogram("latency", 0.1, buckets=(0.5, 1.0))
+    metrics.observe_histogram("latency", 0.7, buckets=(0.5, 1.0))
+    sample = metrics.snapshot().find("latency")
+    assert sample is not None
+    assert sample.kind is MetricKind.HISTOGRAM
+    assert sample.buckets == ((0.5, 1), (1.0, 2))
+    assert sample.count == 2
+
+
+def test_histogram_rejects_changed_boundaries() -> None:
+    metrics = MetricsRegistry()
+    metrics.observe_histogram("latency", 0.1, buckets=(0.5,))
+    with pytest.raises(ValueError):
+        metrics.observe_histogram("latency", 0.2, buckets=(1.0,))
+
+
+def test_noop_metrics_retains_no_state() -> None:
+    metrics = NoOpMetricsRegistry()
+    metrics.increment("requests")
+    metrics.set_gauge("depth", 2)
+    metrics.observe("size", 4)
+    metrics.observe_histogram("latency", 0.1)
+    with metrics.timer("duration"):
+        pass
     assert metrics.snapshot().samples == ()

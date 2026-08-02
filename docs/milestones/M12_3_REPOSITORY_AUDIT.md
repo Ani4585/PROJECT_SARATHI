@@ -1,4 +1,7 @@
-# Milestone 12.3 - Repository Audit Engine
+# Historical Temporary Label - Repository Audit Engine
+
+> Roadmap correction: this work belongs to official M12.4, not M12.3.
+> Official M12.3 is coverage collection and enforcement.
 
 ## Release
 

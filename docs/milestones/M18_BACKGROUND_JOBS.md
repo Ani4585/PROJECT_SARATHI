@@ -1,5 +1,8 @@
 # Milestone 18 - Background Job Engine
 
+> Superseded temporary label. This is preparatory work for official M38/M40,
+> not completion of official M18 Developer Dashboard.
+
 ## Release
 
 - Version: 0.13.0

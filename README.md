@@ -2,58 +2,64 @@
 
 > Enterprise-Grade Modular Intelligence and Application Framework
 
-## Current Release
+## Current Official Release Line
 
 | Item | Value |
 |------|-------|
-| Version | v1.0.0 |
-| Milestone | M20 - Platform Kernel |
-| Build Date | 1 August 2026 |
-| Status | Passing |
+| Version | v0.8.17 |
+| Milestone | M30 - Persistence Layer |
+| Build Date | 2 August 2026 |
+| Status | Phase 4 complete; M25-M30 verified locally |
+
+The authoritative 60-milestone programme is available in
+[`docs/project_sarathi_master_roadmap.html`](docs/project_sarathi_master_roadmap.html).
+PROJECT SARATHI v1.0.0 is reserved for official M60.
 
 ## Vision
 
-PROJECT SARATHI is a modular, enterprise-grade Python framework for
-building large-scale intelligent software systems.
+PROJECT SARATHI is a modular Python framework for building large-scale
+intelligent software systems. Its flagship direction is a National Circular
+Bioeconomy Infrastructure Intelligence Platform capable of producing technical,
+financial, engineering, and policy artefacts from a unified knowledge base.
 
-It provides a foundation for dependency injection, lifecycle
-management, configuration, diagnostics, modular architecture,
-developer tooling, and advanced application orchestration.
+## Completed Official Capabilities
 
-Its first flagship implementation is the National Circular Bioeconomy
-Infrastructure Intelligence Platform, designed to generate technical,
-financial, engineering, and policy artefacts from a unified knowledge
-repository.
+- Core configuration, logging, exceptions, lifecycle, and dependency injection
+- Reflection, dependency graphs, cycle detection, planning, and validation
+- Extensible developer CLI and release gate
+- Framework Doctor and typed diagnostics
+- Source coverage collection with threshold enforcement and JSON/HTML reports
+- Repository and architecture audit with text and JSON output
+- Benchmark runner with versioned baselines and regression detection
+- Dependency, environment, and tooling reports in text, JSON, and HTML
+- Installed CLI extension discovery with isolated diagnostics
+- Thread-safe metrics, structured events, nested tracing, correlation IDs, and exporters
+- Grouped liveness, readiness, and startup monitoring with timeouts and degraded states
+- Wall-time, CPU, allocation, budget, event, and comparison performance monitoring
+- Safe-share runtime diagnostic bundles with service, dependency, and redacted configuration data
+- Managed Architecture Decision Records with lifecycle commands, validation, and index generation
+- Unified terminal, JSON, HTML, historical, and CI developer dashboard
+- Validated plugin manifests, immutable contexts, lifecycle management, capability checks, enable policies, and failure isolation
+- Typed extension points with single, composition, and priority-based replacement policies and deterministic diagnostics
+- Cached installed-package and local-development plugin discovery with manifest validation and isolated compatibility reports
+- Ordered synchronous and asynchronous hooks with filters, cancellation, failure isolation, and execution instrumentation
+- Validated module descriptors, deterministic dependency plans, lifecycle loading, graph protection, and development reload policy
+- Plugin-owned conditional services, commands, hooks, and extensions with frozen scopes and reverse unload cleanup
+- Prioritized mapping, JSON/TOML file, and environment configuration providers with provenance, reload, and change notifications
+- Central JSON, YAML, and TOML serialization with typed codecs, dataclass restoration, schema envelopes, and migration hooks
+- Layered secret providers, opaque masked values, atomic rotation, stale-handle invalidation, and leakage prevention
+- Dependency-aware managed resources, reverse cleanup, lazy initialization, bounded pools, and health integration
+- Thread-safe TTL caching with LRU/FIFO eviction, namespaces, metrics, cache-aside loading, and stampede control
+- Transactional persistence sessions with repositories, units of work, rollback, conflict detection, DI, resources, and health
 
-## Framework Capabilities
+## Preparatory Capabilities
 
-- Layered, typed, and validated configuration
-- Failure-isolated domain events
-- Typed command and query messaging with middleware
-- Dependency-aware module runtime
-- Repository and unit-of-work persistence ports
-- Deterministic background job scheduling
-- Thread-safe operational metrics
-- Integrated platform kernel and health snapshots
-- Structured logging
-- Exception and error handling
-- Application lifecycle management
-- Service registration and dependency injection
-- Constructor and type-based injection
-- Reflection and constructor metadata caching
-- Dependency graph recording and traversal
-- Cycle detection
-- Dependency planning and validation
-- Extensible developer command architecture
-- Explicit built-in command registration
-- Fail-fast repository verification
-- Thin executable composition entry point
-- Framework Doctor with structured diagnostics
-- Deterministic runtime, release-metadata, and import checks
+The repository also contains tested code for metrics, events, messaging,
+modules, persistence, jobs, and an integrated kernel. These components are
+reusable later in the official roadmap but do not represent completion of
+official M13-M20.
 
 ## Developer CLI
-
-PROJECT SARATHI provides one developer entry point:
 
 ```powershell
 python sarathi.py <command>
@@ -62,89 +68,70 @@ python sarathi.py <command>
 | Command | Purpose |
 |---------|---------|
 | `stats` | Display repository statistics |
-| `status` | Display framework, repository, and Git status |
-| `health` | Run automated tests and compilation checks |
-| `test` | Run the complete pytest suite |
+| `status` | Display framework and Git status |
+| `health` | Run automated tests and compilation |
+| `test` | Run the complete test suite |
+| `coverage` | Collect source coverage and enforce its threshold |
 | `compile` | Compile maintained Python locations |
-| `version` | Display authoritative version information |
-| `doctor` | Diagnose framework runtime and structural health |
+| `version` | Display authoritative release metadata |
+| `doctor` | Diagnose runtime and structural health |
 | `audit` | Audit repository structure and integrity |
+| `benchmark` | Run benchmarks and detect performance regressions |
+| `report` | Generate dependency, environment, and tooling reports |
+| `plugins` | Inspect installed CLI command extensions |
+| `monitor` | Run grouped operational health checks |
+| `diagnostics` | Generate a redacted runtime diagnostic bundle |
+| `adr` | Create and manage architecture decision records |
+| `dashboard` | Generate the unified developer dashboard |
 | `release` | Run the release gate |
-| `verify` | Run complete one-command repository verification |
+| `verify` | Run complete repository verification |
 
-The standard verification command is:
+Coverage reports are generated with:
+
+```powershell
+python sarathi.py coverage
+```
+
+The standard release check is:
 
 ```powershell
 python sarathi.py verify
 ```
 
-## Project Structure
-
-```text
-config/
-docs/
-scripts/
-    tooling/
-        cli/
-src/
-tests/
-
-main.py
-sarathi.py
-pytest.ini
-README.md
-```
-
-## Documentation
-
-| Document | Purpose |
-|----------|---------|
-| `docs/STATUS.md` | Live engineering status |
-| `docs/CHANGELOG.md` | Release history |
-| `docs/PROJECT_ROADMAP.md` | Long-term roadmap |
-| `docs/SOFTWARE_ARCHITECTURE.md` | Architecture documentation |
-| `docs/DEVELOPMENT_GUIDE.md` | Development workflow |
-| `docs/RELEASE_GATE.md` | Release requirements |
-| `docs/milestones/` | Completed milestone records |
-
-## Engineering Workflow
-
-```text
-Design
-  -> Implementation
-  -> Focused Tests
-  -> Full Regression Suite
-  -> Compilation
-  -> Release Gate
-  -> Documentation
-  -> Commit
-  -> Version Tag
-```
-
 ## Current Quality Status
 
-- Automated tests: 207 passed
-- Focused M13-M20 tests: 99 passed
-- Compilation: passed
-- Built-in CLI commands: 10
-- Framework Doctor: 3 passed, 0 warnings, 0 failed
-- Architecture health: healthy
-- Backward compatibility: preserved
+- Automated tests: 472
+- Coverage baseline: 90.86%
+- Coverage threshold: 85.00%
+- Framework Doctor: 3 checks
+- Framework import coverage: 25 packages
+- Repository and architecture audit: 9 checks
+- Performance benchmarks: 3
+- Developer report sections: 3
+- Built-in CLI commands: 18
+- M13 observability focused suite: 25
+- M14 health focused suite: 10
+- M15 performance focused suite: 10
+- M16 runtime diagnostics focused suite: 7
+- M17 ADR focused suite: 8
+- M18 dashboard focused suite: 8
+- M19 plugin foundation focused suite: 9
+- M20 extension framework focused suite: 11
+- M21 package discovery focused suite: 11
+- M22 hook system focused suite: 11
+- M23 module loader focused suite: 18
+- M24 dynamic registration focused suite: 12
+- M25 configuration provider focused suite: 15
+- M26 serialization framework focused suite: 15
+- M27 secrets management focused suite: 16
+- M28 resource management focused suite: 18
+- M29 caching framework focused suite: 18
+- M30 persistence layer focused suite: 20
 
-## Next Milestone
+## Next Work
 
-M21 - Production Adapters and API Surface
+Review the Phase 4 checkpoint, then begin official M31 HTTP Server Abstraction.
 
 ## License
 
-Copyright 2026 PROJECT SARATHI TEAM.
-
-All Rights Reserved.
-
-## Repository Audit
-
-Validate the repository structure and Git integrity:
-
-```powershell
-python sarathi.py audit
-```
+Copyright 2026 PROJECT SARATHI TEAM. All Rights Reserved.

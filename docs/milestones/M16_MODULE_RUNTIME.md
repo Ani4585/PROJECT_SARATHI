@@ -1,5 +1,8 @@
 # Milestone 16 - Module Runtime
 
+> Superseded temporary label. This is preparatory work for official M23,
+> not completion of official M16 Runtime Diagnostics.
+
 ## Release
 
 - Version: 0.11.0
