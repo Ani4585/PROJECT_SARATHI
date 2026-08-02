@@ -2,6 +2,26 @@
 
 All notable PROJECT SARATHI framework changes are documented here.
 
+## [0.8.18] - 2026-08-02 (official M31)
+
+### Added
+
+- ASGI application, message-channel, HTTP handler, and server adapter contracts.
+- Validated request scopes, duplicate-preserving headers, query parsing, and bounded body collection.
+- Finite byte/text responses and synchronous or asynchronous streaming responses.
+- Safe exception translation before response start and explicit post-start stream failures.
+- HTTP dispatch with client-disconnect propagation.
+- ASGI lifespan startup, reverse shutdown, completion, and failure handling.
+- Validated server configuration and optional Uvicorn adapter integration.
+- Runnable basic HTTP server example.
+
+### Verification
+
+- Focused official M31 HTTP server abstraction suite: 38 passed.
+- Complete automated test inventory: 510.
+- Fresh source coverage: 91.01% across 176 files; 85.00% threshold passed.
+- Framework import diagnostics expanded to 26 packages.
+
 ## [0.8.17] - 2026-08-02 (official M30; Phase 4 complete)
 
 ### Added

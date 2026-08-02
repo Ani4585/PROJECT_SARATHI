@@ -6,10 +6,10 @@
 
 | Item | Value |
 |------|-------|
-| Version | v0.8.17 |
-| Milestone | M30 - Persistence Layer |
+| Version | v0.8.18 |
+| Milestone | M31 - HTTP Server Abstraction |
 | Build Date | 2 August 2026 |
-| Status | Phase 4 complete; M25-M30 verified locally |
+| Status | Phase 5 active; M31 verified locally |
 
 The authoritative 60-milestone programme is available in
 [`docs/project_sarathi_master_roadmap.html`](docs/project_sarathi_master_roadmap.html).
@@ -51,6 +51,7 @@ financial, engineering, and policy artefacts from a unified knowledge base.
 - Dependency-aware managed resources, reverse cleanup, lazy initialization, bounded pools, and health integration
 - Thread-safe TTL caching with LRU/FIFO eviction, namespaces, metrics, cache-aside loading, and stampede control
 - Transactional persistence sessions with repositories, units of work, rollback, conflict detection, DI, resources, and health
+- ASGI HTTP request/response primitives, streaming, error boundaries, lifespan handling, and server adapter integration
 
 ## Preparatory Capabilities
 
@@ -100,11 +101,11 @@ python sarathi.py verify
 
 ## Current Quality Status
 
-- Automated tests: 472
-- Coverage baseline: 90.86%
+- Automated tests: 510
+- Coverage baseline: 91.01% across 176 source files
 - Coverage threshold: 85.00%
 - Framework Doctor: 3 checks
-- Framework import coverage: 25 packages
+- Framework import coverage: 26 packages
 - Repository and architecture audit: 9 checks
 - Performance benchmarks: 3
 - Developer report sections: 3
@@ -127,10 +128,11 @@ python sarathi.py verify
 - M28 resource management focused suite: 18
 - M29 caching framework focused suite: 18
 - M30 persistence layer focused suite: 20
+- M31 HTTP server abstraction focused suite: 38
 
 ## Next Work
 
-Review the Phase 4 checkpoint, then begin official M31 HTTP Server Abstraction.
+Begin official M32 Routing Engine on the M31 ASGI foundation.
 
 ## License
 

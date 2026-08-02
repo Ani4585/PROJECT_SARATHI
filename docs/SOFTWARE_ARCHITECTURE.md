@@ -4,7 +4,7 @@
 
 **Document Version:** 2.0.0
 
-**Project Version:** v0.8.17-persistence-layer
+**Project Version:** v0.8.18-http-server-abstraction
 
 **Status:** Active
 
@@ -463,3 +463,20 @@ adapter and database identity. Composition helpers register settings, runtime,
 database, and transient units of work with dependency injection; a managed
 resource definition connects startup and cleanup; and a readiness check reports
 connection availability without opening a session as a side effect.
+
+---
+
+# 30. HTTP Server Abstraction
+
+The HTTP boundary follows the ASGI callable model. A validated request wraps
+the server scope and receive channel, preserves ordered duplicate headers, and
+collects body chunks under an explicit size limit. Finite and streaming
+responses emit standards-shaped start and body messages without requiring a
+specific network server.
+
+`HttpApplication` dispatches HTTP and lifespan scopes through one callable.
+Startup callbacks run in declaration order and shutdown callbacks run in
+reverse order. Exceptions before response start are translated by a configurable
+safe boundary; failures after start are surfaced without emitting a conflicting
+second response. `UvicornServerAdapter` is an optional concrete integration,
+while the framework-facing server contract remains independent of Uvicorn.

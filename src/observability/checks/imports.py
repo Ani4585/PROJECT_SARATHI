@@ -30,6 +30,7 @@ DEFAULT_FRAMEWORK_MODULES = (
     "src.graph",
     "src.health",
     "src.hooks",
+    "src.http",
     "src.jobs",
     "src.kernel",
     "src.lifecycle",

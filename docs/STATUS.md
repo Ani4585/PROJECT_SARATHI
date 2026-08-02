@@ -4,8 +4,8 @@
 
 | Item | Status |
 |------|--------|
-| Version | v0.8.17 |
-| Active milestone | M30 - Persistence Layer |
+| Version | v0.8.18 |
+| Active milestone | M31 - HTTP Server Abstraction |
 | M12.3 coverage | Complete |
 | M12.4 repository audit | Complete |
 | M12.4 architecture audit | Complete |
@@ -30,18 +30,20 @@
 | M28 resource management | Complete |
 | M29 caching framework | Complete |
 | M30 persistence layer | Complete |
+| M31 HTTP server abstraction | Complete |
 | Phase 2 | Complete; M12-M18 |
 | Phase 3 | Complete; M19-M24 |
 | Phase 4 | Complete; M25-M30 |
-| Next milestone | M31 - HTTP Server Abstraction |
+| Phase 5 | Active; M31 complete |
+| Next milestone | M32 - Routing Engine |
 | Stable v1.0.0 target | M60 |
 
 ## Verification
 
 | Check | Result |
 |-------|--------|
-| Automated tests | 472 |
-| Coverage baseline | 90.86% |
+| Automated tests | 510 |
+| Coverage baseline | 91.01% across 176 source files |
 | Coverage threshold | 85.00% |
 | Compilation | Passing |
 | Framework Doctor | Healthy on Python 3.14 |
@@ -69,6 +71,7 @@
 | M29 caching framework suite | PASS, 18/18 |
 | M30 persistence layer suite | PASS, 20/20 |
 | Complete persistence compatibility suite | PASS, 32/32 |
+| M31 HTTP server abstraction suite | PASS, 38/38 |
 
 ## Official Milestone Status
 
@@ -93,7 +96,8 @@
 | M28 Resource Management | Complete |
 | M29 Caching Framework | Complete |
 | M30 Persistence Layer | Complete |
-| M31 HTTP Server Abstraction | Next |
+| M31 HTTP Server Abstraction | Complete |
+| M32 Routing Engine | Next |
 
 ## Roadmap Correction
 
