@@ -2,6 +2,27 @@
 
 All notable PROJECT SARATHI framework changes are documented here.
 
+## [0.8.20] - 2026-08-02 (official M33)
+
+### Added
+
+- Structural middleware and next-handler contracts with reusable composition.
+- Deterministic declaration-order execution for synchronous and asynchronous middleware.
+- Direct middleware integration with the ASGI HTTP application.
+- Exception middleware with safe defaults, custom handlers, and transport-failure propagation.
+- Request-ID propagation and generation with async-context isolation.
+- Timing middleware with Server-Timing response headers and metrics integration.
+- Immutable finite and streaming response-header mutation helpers.
+- Failure-isolated per-component execution instrumentation with duration and outcome records.
+- Intentional request short-circuiting and strict response validation.
+
+### Verification
+
+- Focused official M33 middleware pipeline suite: 18 passed.
+- Combined HTTP, middleware, and routing compatibility suite: 60 passed.
+- Complete automated test inventory: 576.
+- Fresh source coverage: 91.39% across 185 files; 85.00% threshold passed.
+
 ## [0.8.19] - 2026-08-02 (official M32)
 
 ### Added

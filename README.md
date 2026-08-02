@@ -6,10 +6,10 @@
 
 | Item | Value |
 |------|-------|
-| Version | v0.8.19 |
-| Milestone | M32 - Routing Engine |
+| Version | v0.8.20 |
+| Milestone | M33 - Middleware Pipeline |
 | Build Date | 2 August 2026 |
-| Status | Phase 5 active; M32 verified locally |
+| Status | Phase 5 active; M33 verified locally |
 
 The authoritative 60-milestone programme is available in
 [`docs/project_sarathi_master_roadmap.html`](docs/project_sarathi_master_roadmap.html).
@@ -53,6 +53,7 @@ financial, engineering, and policy artefacts from a unified knowledge base.
 - Transactional persistence sessions with repositories, units of work, rollback, conflict detection, DI, resources, and health
 - ASGI HTTP request/response primitives, streaming, error boundaries, lifespan handling, and server adapter integration
 - Typed static and parameterized routing with deterministic precedence, groups, reverse URLs, and HTTP 404/405 dispatch
+- Ordered sync/async HTTP middleware with safe exceptions, request IDs, timing, response mutation, and execution instrumentation
 
 ## Preparatory Capabilities
 
@@ -102,8 +103,8 @@ python sarathi.py verify
 
 ## Current Quality Status
 
-- Automated tests: 558
-- Coverage baseline: 91.30% across 183 source files
+- Automated tests: 576
+- Coverage baseline: 91.39% across 185 source files
 - Coverage threshold: 85.00%
 - Framework Doctor: 3 checks
 - Framework import coverage: 27 packages
@@ -131,10 +132,11 @@ python sarathi.py verify
 - M30 persistence layer focused suite: 20
 - M31 HTTP server abstraction focused suite: 38
 - M32 routing engine focused suite: 48
+- M33 middleware pipeline focused suite: 18
 
 ## Next Work
 
-Begin official M33 Middleware Pipeline on the M32 routing foundation.
+Begin official M34 Request Lifecycle on the M33 middleware foundation.
 
 ## License
 

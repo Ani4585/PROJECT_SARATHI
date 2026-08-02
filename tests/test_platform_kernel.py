@@ -75,8 +75,8 @@ def test_kernel_health_exposes_release_and_runtime_state() -> None:
     kernel = PlatformKernelBuilder().build()
     health = kernel.health()
     assert health.framework == "PROJECT SARATHI"
-    assert health.version == "0.8.19"
-    assert health.milestone == "M32"
+    assert health.version == "0.8.20"
+    assert health.milestone == "M33"
     assert health.state == "STOPPED"
 
 

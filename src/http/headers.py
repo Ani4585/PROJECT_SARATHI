@@ -62,6 +62,13 @@ class Headers:
     def with_default(self, name: str | bytes, value: str | bytes) -> "Headers":
         return self if self.contains(name) else self.appended(name, value)
 
+    def replaced(self, name: str | bytes, value: str | bytes) -> "Headers":
+        """Return headers with every existing occurrence replaced by one value."""
+
+        target = _name(name)
+        retained = tuple(pair for pair in self._raw if pair[0] != target)
+        return Headers((*retained, (target, _value(value))))
+
     def __iter__(self) -> Iterator[HeaderPair]:
         return iter(self._raw)
 

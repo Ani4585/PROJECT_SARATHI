@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import inspect
-from collections.abc import Awaitable, Callable, Mapping, Sequence
+from collections.abc import Awaitable, Callable, Iterable, Mapping, Sequence
 from typing import TypeAlias
 
 from .contracts import ASGIMessage, ASGIReceive, ASGIScope, ASGISend
@@ -13,6 +13,7 @@ from .exceptions import (
     ResponseStreamError,
     UnsupportedProtocolError,
 )
+from .middleware import MiddlewareCallable, MiddlewarePipeline
 from .request import Request
 from .response import Response, StreamingResponse, TextResponse
 
@@ -74,12 +75,14 @@ class HttpApplication:
         startup: Sequence[LifecycleCallback] = (),
         shutdown: Sequence[LifecycleCallback] = (),
         exception_boundary: ExceptionBoundary | None = None,
+        middleware: Iterable[MiddlewareCallable] = (),
     ) -> None:
         if not callable(handler):
             raise TypeError("HTTP application handler must be callable.")
         if any(not callable(callback) for callback in (*startup, *shutdown)):
             raise TypeError("HTTP lifecycle callbacks must be callable.")
-        self._handler = handler
+        self._middleware = MiddlewarePipeline(middleware)
+        self._handler = self._middleware.compose(handler)
         self._startup = tuple(startup)
         self._shutdown = tuple(shutdown)
         self._boundary = exception_boundary or ExceptionBoundary()
@@ -89,6 +92,10 @@ class HttpApplication:
     @property
     def started(self) -> bool:
         return self._started
+
+    @property
+    def middleware(self) -> tuple[MiddlewareCallable, ...]:
+        return self._middleware.middleware
 
     async def __call__(
         self,

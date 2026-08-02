@@ -68,6 +68,22 @@ class Response:
             "more_body": False,
         }
 
+    def with_header(
+        self,
+        name: str | bytes,
+        value: str | bytes,
+        *,
+        replace: bool = True,
+    ) -> "Response":
+        """Return a finite response with an added or replaced header."""
+
+        headers = (
+            self.headers.replaced(name, value)
+            if replace
+            else self.headers.appended(name, value)
+        )
+        return Response(self.body, status=self.status, headers=headers)
+
     async def send(self, send: ASGISend) -> None:
         await send(self.start_message())
         await send(self.body_message())
@@ -133,6 +149,22 @@ class StreamingResponse:
             "status": self.status,
             "headers": list(self.headers.raw),
         }
+
+    def with_header(
+        self,
+        name: str | bytes,
+        value: str | bytes,
+        *,
+        replace: bool = True,
+    ) -> "StreamingResponse":
+        """Return a streaming response with an added or replaced header."""
+
+        headers = (
+            self.headers.replaced(name, value)
+            if replace
+            else self.headers.appended(name, value)
+        )
+        return StreamingResponse(self._body, status=self.status, headers=headers)
 
     async def send(self, send: ASGISend) -> None:
         iterator = self._iterate().__aiter__()

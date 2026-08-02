@@ -22,6 +22,23 @@ from .exceptions import (
     UnsupportedProtocolError,
 )
 from .headers import HeaderInput, HeaderPair, Headers
+from .middleware import (
+    HTTPResponse,
+    Middleware,
+    MiddlewareCallable,
+    MiddlewareExecution,
+    MiddlewareObserver,
+    MiddlewareOutcome,
+    MiddlewarePipeline,
+    MiddlewareResult,
+    NextHandler,
+)
+from .middleware_builtins import (
+    ExceptionMiddleware,
+    RequestIdMiddleware,
+    TimingMiddleware,
+    current_request_id,
+)
 from .request import Request
 from .response import Response, StreamingResponse, TextResponse
 from .server import ServerConfiguration, UvicornServerAdapter
@@ -34,16 +51,27 @@ __all__ = [
     "ASGISend",
     "ClientDisconnectedError",
     "ExceptionBoundary",
+    "ExceptionMiddleware",
     "HTTPHandler",
     "HeaderInput",
     "HeaderPair",
     "Headers",
     "HttpApplication",
     "HttpError",
+    "HTTPResponse",
     "InvalidMessageError",
     "InvalidScopeError",
     "LifespanProtocolError",
+    "Middleware",
+    "MiddlewareCallable",
+    "MiddlewareExecution",
+    "MiddlewareObserver",
+    "MiddlewareOutcome",
+    "MiddlewarePipeline",
+    "MiddlewareResult",
+    "NextHandler",
     "Request",
+    "RequestIdMiddleware",
     "RequestBodyTooLargeError",
     "Response",
     "ResponseStreamError",
@@ -51,7 +79,9 @@ __all__ = [
     "ServerAdapterUnavailableError",
     "ServerConfiguration",
     "TextResponse",
+    "TimingMiddleware",
     "StreamingResponse",
     "UnsupportedProtocolError",
     "UvicornServerAdapter",
+    "current_request_id",
 ]

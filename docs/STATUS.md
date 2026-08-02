@@ -4,8 +4,8 @@
 
 | Item | Status |
 |------|--------|
-| Version | v0.8.19 |
-| Active milestone | M32 - Routing Engine |
+| Version | v0.8.20 |
+| Active milestone | M33 - Middleware Pipeline |
 | M12.3 coverage | Complete |
 | M12.4 repository audit | Complete |
 | M12.4 architecture audit | Complete |
@@ -32,19 +32,20 @@
 | M30 persistence layer | Complete |
 | M31 HTTP server abstraction | Complete |
 | M32 routing engine | Complete |
+| M33 middleware pipeline | Complete |
 | Phase 2 | Complete; M12-M18 |
 | Phase 3 | Complete; M19-M24 |
 | Phase 4 | Complete; M25-M30 |
-| Phase 5 | Active; M31-M32 complete |
-| Next milestone | M33 - Middleware Pipeline |
+| Phase 5 | Active; M31-M33 complete |
+| Next milestone | M34 - Request Lifecycle |
 | Stable v1.0.0 target | M60 |
 
 ## Verification
 
 | Check | Result |
 |-------|--------|
-| Automated tests | 558 |
-| Coverage baseline | 91.30% across 183 source files |
+| Automated tests | 576 |
+| Coverage baseline | 91.39% across 185 source files |
 | Coverage threshold | 85.00% |
 | Compilation | Passing |
 | Framework Doctor | Healthy on Python 3.14 |
@@ -74,6 +75,7 @@
 | Complete persistence compatibility suite | PASS, 32/32 |
 | M31 HTTP server abstraction suite | PASS, 38/38 |
 | M32 routing engine suite | PASS, 48/48 |
+| M33 middleware pipeline suite | PASS, 18/18 |
 
 ## Official Milestone Status
 
@@ -100,7 +102,8 @@
 | M30 Persistence Layer | Complete |
 | M31 HTTP Server Abstraction | Complete |
 | M32 Routing Engine | Complete |
-| M33 Middleware Pipeline | Next |
+| M33 Middleware Pipeline | Complete |
+| M34 Request Lifecycle | Next |
 
 ## Roadmap Correction
 
