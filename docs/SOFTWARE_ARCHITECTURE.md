@@ -4,7 +4,7 @@
 
 **Document Version:** 2.0.0
 
-**Project Version:** v0.8.18-http-server-abstraction
+**Project Version:** v0.8.19-routing-engine
 
 **Status:** Active
 
@@ -480,3 +480,21 @@ reverse order. Exceptions before response start are translated by a configurable
 safe boundary; failures after start are surfaced without emitting a conflicting
 second response. `UvicornServerAdapter` is an optional concrete integration,
 while the framework-facing server contract remains independent of Uvicorn.
+
+---
+
+# 31. Routing Engine
+
+Routes compile validated absolute templates into anchored matchers. Parameters
+use named converters for strings, non-negative integers, UUIDs, custom types,
+or a final catch-all remainder. Resolution is registration-order independent:
+static segments outrank typed segments, typed segments outrank generic strings,
+and complete segment patterns outrank catch-all paths.
+
+The router rejects duplicate names and ambiguous path shapes with overlapping
+methods. Missing paths and unsupported methods remain distinct outcomes, with
+the latter retaining a deterministic Allow set. Route groups apply reusable
+path and name prefixes, while reverse URL generation validates every required
+parameter and percent-encodes individual segments. `RoutingHandler` connects
+the router to `HttpApplication`, invokes synchronous or asynchronous endpoints
+with typed parameters, and emits plain 404 or 405 responses at the HTTP edge.

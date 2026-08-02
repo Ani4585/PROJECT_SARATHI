@@ -2,6 +2,27 @@
 
 All notable PROJECT SARATHI framework changes are documented here.
 
+## [0.8.19] - 2026-08-02 (official M32)
+
+### Added
+
+- Validated route, match, parameter, group, and converter models.
+- Static, typed, generic, custom, and catch-all path parameter conversion.
+- Registration-order-independent route precedence.
+- Ambiguous-shape, overlapping-method, and duplicate-name conflict detection.
+- Explicit route-not-found and method-not-allowed outcomes with Allow sets.
+- Reusable path/name-prefixed groups and decorator registration.
+- Reverse URL generation with converter validation and percent encoding.
+- Synchronous and asynchronous route dispatch through the M31 ASGI application.
+- Plain HTTP 404 and 405 responses with a standards-shaped Allow header.
+
+### Verification
+
+- Focused official M32 routing engine suite: 48 passed.
+- Complete automated test inventory: 558.
+- Fresh source coverage: 91.30% across 183 files; 85.00% threshold passed.
+- Framework import diagnostics expanded to 27 packages.
+
 ## [0.8.18] - 2026-08-02 (official M31)
 
 ### Added

@@ -43,6 +43,7 @@ DEFAULT_FRAMEWORK_MODULES = (
     "src.reflection",
     "src.runtime_diagnostics",
     "src.resources",
+    "src.routing",
     "src.serialization",
     "src.secrets",
 )

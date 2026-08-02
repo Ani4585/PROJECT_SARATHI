@@ -49,7 +49,8 @@ It targets PROJECT SARATHI v1.0.0 at M60.
 | M29 | Caching Framework | Complete |
 | M30 | Persistence Layer | Complete |
 | M31 | HTTP Server Abstraction | Complete |
-| M32 | Routing Engine | Next |
+| M32 | Routing Engine | Complete |
+| M33 | Middleware Pipeline | Next |
 
 ## Version Policy
 

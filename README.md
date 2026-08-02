@@ -6,10 +6,10 @@
 
 | Item | Value |
 |------|-------|
-| Version | v0.8.18 |
-| Milestone | M31 - HTTP Server Abstraction |
+| Version | v0.8.19 |
+| Milestone | M32 - Routing Engine |
 | Build Date | 2 August 2026 |
-| Status | Phase 5 active; M31 verified locally |
+| Status | Phase 5 active; M32 verified locally |
 
 The authoritative 60-milestone programme is available in
 [`docs/project_sarathi_master_roadmap.html`](docs/project_sarathi_master_roadmap.html).
@@ -52,6 +52,7 @@ financial, engineering, and policy artefacts from a unified knowledge base.
 - Thread-safe TTL caching with LRU/FIFO eviction, namespaces, metrics, cache-aside loading, and stampede control
 - Transactional persistence sessions with repositories, units of work, rollback, conflict detection, DI, resources, and health
 - ASGI HTTP request/response primitives, streaming, error boundaries, lifespan handling, and server adapter integration
+- Typed static and parameterized routing with deterministic precedence, groups, reverse URLs, and HTTP 404/405 dispatch
 
 ## Preparatory Capabilities
 
@@ -101,11 +102,11 @@ python sarathi.py verify
 
 ## Current Quality Status
 
-- Automated tests: 510
-- Coverage baseline: 91.01% across 176 source files
+- Automated tests: 558
+- Coverage baseline: 91.30% across 183 source files
 - Coverage threshold: 85.00%
 - Framework Doctor: 3 checks
-- Framework import coverage: 26 packages
+- Framework import coverage: 27 packages
 - Repository and architecture audit: 9 checks
 - Performance benchmarks: 3
 - Developer report sections: 3
@@ -129,10 +130,11 @@ python sarathi.py verify
 - M29 caching framework focused suite: 18
 - M30 persistence layer focused suite: 20
 - M31 HTTP server abstraction focused suite: 38
+- M32 routing engine focused suite: 48
 
 ## Next Work
 
-Begin official M32 Routing Engine on the M31 ASGI foundation.
+Begin official M33 Middleware Pipeline on the M32 routing foundation.
 
 ## License
 
