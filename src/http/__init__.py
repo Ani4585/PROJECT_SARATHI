@@ -1,5 +1,6 @@
 """Public PROJECT SARATHI HTTP and ASGI primitives."""
 
+from .context import HttpContext, RequestContext, current_trace_id, current_span_id
 from .contracts import (
     ASGIApplication,
     ASGIMessage,
@@ -52,6 +53,9 @@ __all__ = [
     "ClientDisconnectedError",
     "ExceptionBoundary",
     "ExceptionMiddleware",
+    "HttpContext",
+    "current_trace_id",
+    "current_span_id",
     "HTTPHandler",
     "HeaderInput",
     "HeaderPair",
@@ -71,6 +75,7 @@ __all__ = [
     "MiddlewareResult",
     "NextHandler",
     "Request",
+    "RequestContext",
     "RequestIdMiddleware",
     "RequestBodyTooLargeError",
     "Response",

@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+import json as _json
+import urllib.parse
 from collections.abc import Mapping
 from types import MappingProxyType
 from urllib.parse import parse_qsl
@@ -92,6 +94,31 @@ class Request:
         value = self._scope.get("client")
         return value if isinstance(value, tuple) and len(value) == 2 else None  # type: ignore[return-value]
 
+    @property
+    def context(self) -> RequestContext:
+        from .context import RequestContext
+        if not hasattr(self, "_context_instance"):
+            self._context_instance = RequestContext(self, self._scope)
+        return self._context_instance
+
+    @property
+    def path_params(self) -> dict[str, str]:
+        value = self._scope.get("path_params")
+        return dict(value) if isinstance(value, Mapping) else {}
+
+    @property
+    def query_dict(self) -> dict[str, str]:
+        return dict(self.query_params)
+
+    def query_param(self, name: str, default: str | None = None) -> str | None:
+        for k, v in self.query_params:
+            if k == name:
+                return v
+        return default
+
+    def header(self, name: str, default: str | None = None) -> str | None:
+        return self.headers.get(name, default)
+
     async def body(self, *, max_bytes: int = 1024 * 1024) -> bytes:
         if not isinstance(max_bytes, int) or isinstance(max_bytes, bool) or max_bytes < 0:
             raise ValueError("Request body limit must be a non-negative integer.")
@@ -134,3 +161,23 @@ class Request:
                     break
             self._body = b"".join(chunks)
             return self._body
+
+    async def text(self, *, max_bytes: int = 1024 * 1024, encoding: str = "utf-8") -> str:
+        raw_body = await self.body(max_bytes=max_bytes)
+        try:
+            return raw_body.decode(encoding)
+        except UnicodeDecodeError as error:
+            raise InvalidMessageError(f"Failed to decode request body with encoding '{encoding}': {error}") from error
+
+    async def json(self, *, max_bytes: int = 1024 * 1024) -> Any:
+        body_text = await self.text(max_bytes=max_bytes)
+        if not body_text.strip():
+            raise InvalidMessageError("Cannot parse JSON from an empty request body.")
+        try:
+            return _json.loads(body_text)
+        except Exception as error:
+            raise InvalidMessageError(f"Malformed JSON payload: {error}") from error
+
+    async def form(self, *, max_bytes: int = 1024 * 1024) -> tuple[tuple[str, str], ...]:
+        body_text = await self.text(max_bytes=max_bytes)
+        return tuple(urllib.parse.parse_qsl(body_text, keep_blank_values=True))

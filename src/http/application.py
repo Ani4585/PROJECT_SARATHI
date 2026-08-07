@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import asyncio
 import inspect
 from collections.abc import Awaitable, Callable, Iterable, Mapping, Sequence
 from typing import TypeAlias
 
 from .contracts import ASGIMessage, ASGIReceive, ASGIScope, ASGISend
 from .exceptions import (
+    ClientDisconnectedError,
     InvalidMessageError,
     LifespanProtocolError,
     ResponseStreamError,
@@ -126,7 +128,11 @@ class HttpApplication:
                 response = await response
             if not isinstance(response, (Response, StreamingResponse)):
                 raise TypeError("HTTP handler must return a Response or StreamingResponse.")
+            request.context.finalize_response(response)
             await response.send(tracked)
+        except (ClientDisconnectedError, asyncio.CancelledError):
+            request.context.cancel()
+            raise
         except OSError:
             raise
         except Exception as error:
@@ -137,6 +143,7 @@ class HttpApplication:
                     f"HTTP response failed after starting: {type(error).__name__}: {error}"
                 ) from error
             fallback = await self._boundary.response(request, error)
+            request.context.finalize_response(fallback)
             await fallback.send(tracked)
 
     async def _dispatch_lifespan(
