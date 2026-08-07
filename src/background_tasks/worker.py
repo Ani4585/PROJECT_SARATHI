@@ -1,5 +1,7 @@
 ﻿import asyncio
+import inspect
 import logging
+from datetime import datetime, timezone
 from typing import Optional
 from .models import BackgroundTaskItem, TaskStatus
 from .queue import BackgroundTaskQueue
@@ -36,8 +38,9 @@ class BackgroundTaskWorker:
                 continue
 
             item.status = TaskStatus.RUNNING
+            item.started_at = datetime.now(timezone.utc)
             try:
-                if asyncio.iscoroutinefunction(item.func):
+                if inspect.iscoroutinefunction(item.func):
                     item.result = await item.func(*item.args, **item.kwargs)
                 else:
                     item.result = item.func(*item.args, **item.kwargs)
@@ -47,4 +50,5 @@ class BackgroundTaskWorker:
                 item.status = TaskStatus.FAILED
                 logger.error(f"Task {item.task_id} failed: {ex}")
             finally:
+                item.completed_at = datetime.now(timezone.utc)
                 self.queue.task_done()

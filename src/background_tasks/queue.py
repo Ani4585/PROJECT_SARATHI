@@ -1,6 +1,6 @@
 ﻿import asyncio
 from typing import Optional, Tuple
-from .models import BackgroundTaskItem, TaskStatus
+from .models import BackgroundTaskItem
 
 class BackgroundTaskQueue:
     def __init__(self, maxsize: int = 0) -> None:

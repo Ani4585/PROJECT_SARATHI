@@ -1,34 +1,23 @@
-"""PROJECT SARATHI Cancellation Tokens and Timeout Utilities."""
-
-from __future__ import annotations
-
-import asyncio
-from typing import Any, Awaitable, TypeVar
-
-T = TypeVar("T")
-
+﻿import asyncio
 
 class CancellationToken:
-    """Cooperative cancellation token for async tasks."""
-
     def __init__(self) -> None:
-        self._event = asyncio.Event()
+        self._is_cancelled = False
 
     @property
     def is_cancellation_requested(self) -> bool:
-        return self._event.is_set()
+        return self._is_cancelled
+
+    @property
+    def isCancellationRequested(self) -> bool:
+        return self._is_cancelled
 
     def cancel(self) -> None:
-        self._event.set()
+        self._is_cancelled = True
+
+    def throw_if_cancellation_requested(self) -> None:
+        if self._is_cancelled:
+            raise asyncio.CancelledError("Operation was cancelled by CancellationToken")
 
     def throwIfCancellationRequested(self) -> None:
-        if self.is_cancellation_requested:
-            raise asyncio.CancelledError("Operation was cancelled via CancellationToken.")
-
-
-async def with_timeout(coro_or_future: Awaitable[T], timeout_seconds: float) -> T:
-    """Execute an async operation with a strict timeout in seconds."""
-    try:
-        return await asyncio.wait_for(coro_or_future, timeout=timeout_seconds)
-    except asyncio.TimeoutError as err:
-        raise TimeoutError(f"Operation timed out after {timeout_seconds} seconds.") from err
+        self.throw_if_cancellation_requested()

@@ -1,7 +1,7 @@
 ﻿import enum
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Callable, Dict, Optional
 
 class TaskStatus(str, enum.Enum):
@@ -21,4 +21,6 @@ class BackgroundTaskItem:
     status: TaskStatus = TaskStatus.PENDING
     result: Optional[Any] = None
     error: Optional[Exception] = None
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
