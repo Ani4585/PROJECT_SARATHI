@@ -90,3 +90,5 @@ __all__ = [
     "UvicornServerAdapter",
     "current_request_id",
 ]
+
+from .di import inject_handler

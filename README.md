@@ -6,10 +6,10 @@
 
 | Item | Value |
 |------|-------|
-| Version | v0.8.21 |
-| Milestone | M34 - Request Lifecycle |
+| Version | v0.8.22 |
+| Milestone | M35 - Web Dependency Injection |
 | Build Date | 7 August 2026 |
-| Status | Phase 5 active; M34 verified locally |
+| Status | Phase 5 active; M35 verified locally |
 
 The authoritative 60-milestone programme is available in
 [`docs/project_sarathi_master_roadmap.html`](docs/project_sarathi_master_roadmap.html).
@@ -39,6 +39,9 @@ financial, engineering, and policy artefacts from a unified knowledge base.
 - Safe-share runtime diagnostic bundles with service, dependency, and redacted configuration data
 - Managed Architecture Decision Records with lifecycle commands, validation, and index generation
 - Request lifecycle context, headers/query/path/body parsing, response finalization, cancellation signals, and tracing context
+- Request-scoped DI lifetime, handler dependency injection, automatic scope disposal, and concurrent request isolation
+- Request-scoped DI lifetime, handler dependency injection, automatic scope disposal, and concurrent request isolation
+- Request-scoped DI lifetime, handler dependency injection, automatic scope disposal, and concurrent request isolation
 - Unified terminal, JSON, HTML, historical, and CI developer dashboard
 - Validated plugin manifests, immutable contexts, lifecycle management, capability checks, enable policies, and failure isolation
 - Typed extension points with single, composition, and priority-based replacement policies and deterministic diagnostics

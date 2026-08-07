@@ -146,6 +146,23 @@ class ServiceContainer:
             del self._typed_services[service_type]
             self._service_descriptors.pop(service_type, None)
 
+
+    def create_scope(self) -> Any:
+        """Create a new request-scoped container context."""
+        from .scope import RequestScope
+        return RequestScope(parent_container=self)
+
+    def register_scoped(self, service_type: type, implementation_type: type | None = None) -> None:
+        """Register a service type with SCOPED lifetime."""
+        impl = implementation_type or service_type
+        descriptor = ServiceDescriptor(
+            service_type=service_type,
+            implementation_type=impl,
+            lifetime=ServiceLifetime.SCOPED,
+        )
+        self._service_descriptors[service_type] = descriptor
+        self._typed_services[service_type] = impl
+
     # --------------------------------------------------
     # Descriptor API
     # --------------------------------------------------

@@ -30,3 +30,6 @@ __all__ = [
     "ServiceAlreadyRegisteredError",
 ]
 from .bootstrap import bootstrap_container
+
+from .scope import RequestScope, ServiceScope
+from .exceptions import ScopeNotFoundError

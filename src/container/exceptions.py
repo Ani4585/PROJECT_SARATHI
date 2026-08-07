@@ -42,3 +42,7 @@ class ServiceAlreadyRegisteredError(ContainerError):
             message=f"Service '{service_name}' is already registered.",
             details={"service": service_name},
         )
+
+class ScopeNotFoundError(Exception):
+    """Raised when resolving a scoped service outside an active RequestScope."""
+    pass

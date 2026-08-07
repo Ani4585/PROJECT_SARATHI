@@ -5,8 +5,9 @@ from __future__ import annotations
 import asyncio
 import inspect
 from collections.abc import Awaitable, Callable, Iterable, Mapping, Sequence
-from typing import TypeAlias
+from typing import Any, TypeAlias
 
+from .context import HttpContext, RequestContext
 from .contracts import ASGIMessage, ASGIReceive, ASGIScope, ASGISend
 from .exceptions import (
     ClientDisconnectedError,
@@ -78,6 +79,7 @@ class HttpApplication:
         shutdown: Sequence[LifecycleCallback] = (),
         exception_boundary: ExceptionBoundary | None = None,
         middleware: Iterable[MiddlewareCallable] = (),
+        container: Any = None,
     ) -> None:
         if not callable(handler):
             raise TypeError("HTTP application handler must be callable.")
@@ -88,6 +90,7 @@ class HttpApplication:
         self._startup = tuple(startup)
         self._shutdown = tuple(shutdown)
         self._boundary = exception_boundary or ExceptionBoundary()
+        self._container = container
         self.state: dict[str, object] = {}
         self._started = False
 
@@ -120,16 +123,36 @@ class HttpApplication:
         receive: ASGIReceive,
         send: ASGISend,
     ) -> None:
+        req_scope = self._container.create_scope() if self._container and hasattr(self._container, "create_scope") else None
+        if req_scope and isinstance(scope, dict):
+            scope["request_scope"] = req_scope
+
         request = Request(scope, receive)
         tracked = _TrackedSender(send)
+
+        if req_scope:
+            req_scope.set(Request, request)
+            req_scope.set(RequestContext, request.context)
+            req_scope.set(HttpContext, request.context)
+
         try:
-            response = self._handler(request)
-            if inspect.isawaitable(response):
-                response = await response
-            if not isinstance(response, (Response, StreamingResponse)):
-                raise TypeError("HTTP handler must return a Response or StreamingResponse.")
-            request.context.finalize_response(response)
-            await response.send(tracked)
+            if req_scope:
+                async with req_scope:
+                    response = self._handler(request)
+                    if inspect.isawaitable(response):
+                        response = await response
+                    if not isinstance(response, (Response, StreamingResponse)):
+                        raise TypeError("HTTP handler must return a Response or StreamingResponse.")
+                    request.context.finalize_response(response)
+                    await response.send(tracked)
+            else:
+                response = self._handler(request)
+                if inspect.isawaitable(response):
+                    response = await response
+                if not isinstance(response, (Response, StreamingResponse)):
+                    raise TypeError("HTTP handler must return a Response or StreamingResponse.")
+                request.context.finalize_response(response)
+                await response.send(tracked)
         except (ClientDisconnectedError, asyncio.CancelledError):
             request.context.cancel()
             raise
