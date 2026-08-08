@@ -1,4 +1,4 @@
-﻿import asyncio
+import asyncio
 import inspect
 import threading
 import time
@@ -105,18 +105,6 @@ class InMemoryCache(Generic[K, V]):
             except Exception:
                 pass
 
-        def _record_duration(self, operation: str, elapsed: float) -> None:
-        if not self.metrics:
-            return
-        labels = {"cache": self.name, "operation": operation}
-        try:
-            self.metrics.observe("cache.operation.duration", elapsed, labels=labels)
-        except Exception:
-            try:
-                self.metrics.distribution("cache.operation.duration", labels=labels).observe(elapsed)
-            except Exception:
-                pass
-
     def _record_metric(self, name: str, amount: float = 1.0) -> None:
         if not self.metrics:
             return
@@ -129,7 +117,20 @@ class InMemoryCache(Generic[K, V]):
             except Exception:
                 pass
 
+    def _record_duration(self, operation: str, elapsed: float) -> None:
+        if not self.metrics:
+            return
+        labels = {"cache": self.name, "operation": operation}
+        try:
+            self.metrics.observe("cache.operation.duration", elapsed, labels=labels)
+        except Exception:
+            try:
+                self.metrics.distribution("cache.operation.duration", labels=labels).observe(elapsed)
+            except Exception:
+                pass
+
     def set(self, key: K, value: V, ttl_seconds: Optional[float] = None) -> None:
+        _start = self.clock()
         try:
             hash(key)
         except TypeError as e:
@@ -159,6 +160,7 @@ class InMemoryCache(Generic[K, V]):
 
         self._store[key] = (value, now, expires_at)
         self._update_entries_metric()
+        self._record_duration("set", self.clock() - _start)
 
     def get(self, key: K) -> CacheGetResult[V]:
         _start = self.clock()
@@ -174,8 +176,9 @@ class InMemoryCache(Generic[K, V]):
                 del self._store[key]
                 self._expirations += 1
                 self._misses += 1
+                self._update_entries_metric()
                 self._record_metric("cache.misses")
-        self._record_duration('get', self.clock() - _start)
+                self._record_duration("get", self.clock() - _start)
                 return CacheGetResult(False, None)
             
             # LRU re-ordering
@@ -185,12 +188,12 @@ class InMemoryCache(Generic[K, V]):
 
             self._hits += 1
             self._record_metric("cache.hits")
-            self._record_duration('get', self.clock() - _start)
+            self._record_duration("get", self.clock() - _start)
             return CacheGetResult(True, val)
 
         self._misses += 1
         self._record_metric("cache.misses")
-        self._record_duration('get', self.clock() - _start)
+        self._record_duration("get", self.clock() - _start)
         return CacheGetResult(False, None)
 
     def delete(self, key: K) -> bool:
@@ -204,6 +207,7 @@ class InMemoryCache(Generic[K, V]):
     def clear(self) -> int:
         count = len(self._store)
         self._store.clear()
+        self._update_entries_metric()
         return count
 
     def keys(self) -> Tuple[K, ...]:
@@ -232,7 +236,6 @@ class NamespacedCache(Generic[K, V]):
         self.backend.set(self._make_key(key), value, ttl_seconds)
 
     def get(self, key: K) -> CacheGetResult[V]:
-        _start = self.clock()
         return self.backend.get(self._make_key(key))
 
     def keys(self) -> Tuple[K, ...]:
