@@ -89,7 +89,11 @@ class InMemoryCache(Generic[K, V]):
         finally:
             self._latency("get", started)
 
-    def set(self, key: K, value: V, *, ttl_seconds: float | None = None) -> None:
+    def set(self, key, value, ttl_seconds=None):
+        if ttl_seconds is not None and ttl_seconds <= 0:
+            raise ValueError("TTL seconds must be > 0")
+        # original set signature
+self, key: K, value: V, *, ttl_seconds: float | None = None) -> None:
         self._validate_key(key)
         ttl = self._policy.ttl_seconds if ttl_seconds is None else ttl_seconds
         if ttl is not None and ttl <= 0:
