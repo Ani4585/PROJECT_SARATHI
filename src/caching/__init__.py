@@ -93,19 +93,17 @@ class InMemoryCache(Generic[K, V]):
         self._writes = 0
         self._deletes = 0
 
-    def _record_metric(self, name: str) -> None:
+    def _record_metric(self, name: str, amount: float = 1.0) -> None:
         if not self.metrics:
             return
-        labels = (("cache", self.name),)
+        labels = {"cache": self.name}
         try:
-            self.metrics.counter(name, labels=labels).increment()
-        except TypeError:
+            self.metrics.increment(name, amount, labels=labels)
+        except Exception:
             try:
-                self.metrics.counter(name, labels).increment()
+                self.metrics.counter(name, labels=labels).increment(amount)
             except Exception:
                 pass
-        except Exception:
-            pass
 
     def set(self, key: K, value: V, ttl_seconds: Optional[float] = None) -> None:
         try:
