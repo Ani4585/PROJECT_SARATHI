@@ -1,0 +1,33 @@
+PROJECT_SARATHI/
+├── sarathi/
+│   ├── __init__.py               # Master Package Export (v2.0.0)
+│   ├── core/                     # Asynchronous Runtime Core
+│   ├── vector_rag/              # Milestone 54 Engine
+│   │   ├── metrics.py            # Cosine, Euclidean, Manhattan similarity
+│   │   ├── document.py           # VectorDocument & SearchResult dataclasses
+│   │   ├── filter.py             # Metadata filtering evaluator ($eq, $gte, $in, $and, $or)
+│   │   ├── index.py              # FlatVectorIndex with NumPy acceleration
+│   │   ├── store.py              # Multi-tenant VectorStore & Namespace Manager
+│   │   ├── embeddings.py         # Mock, OpenAI, HuggingFace embedding drivers
+│   │   ├── chunking.py           # Character, RecursiveText, Sentence chunkers
+│   │   ├── bm25.py               # BM25Okapi sparse lexical retriever
+│   │   ├── retrieval.py          # Hybrid search (Reciprocal Rank Fusion RRF)
+│   │   ├── pipeline.py           # Document Ingestion & RAG Pipeline
+│   │   ├── agent_tool.py         # RAGTool binding for AI Agents
+│   │   └── orchestrator.py       # VectorRAGManager plugin
+│   ├── workflow/                 # Milestone 55 Engine
+│   │   ├── dag.py                # TaskNode, TaskDAG, DAGExecutor, Cycle Detection
+│   │   ├── state_machine.py      # WorkflowStatus, WorkflowState, Transitions
+│   │   ├── swarm.py              # Multi-Agent Swarm Orchestrator & Blackboard
+│   │   ├── interceptors.py       # Workflow Interceptors & Event Hooks
+│   │   └── orchestrator.py       # WorkflowManager
+│   └── v2_platform/              # Milestone 56 Master Synthesis
+│       ├── platform.py           # SarathiPlatform v2.0.0 Master Orchestrator
+│       ├── health.py             # SystemHealthProbe & PlatformMetricsReporter
+│       └── benchmarks.py         # High-concurrency stress test harness
+├── docs/
+│   └── project_sarathi_master_roadmap.html  # Authoritative Master Roadmap
+└── tests/
+    ├── test_milestone_54_vector_rag.py     # Vector RAG Test Suite
+    ├── test_milestone_55_workflow_dag.py    # DAG & Swarm Test Suite
+    └── test_milestone_56_v2_platform.py     # v2.0.0 Platform Synthesis Test Suite

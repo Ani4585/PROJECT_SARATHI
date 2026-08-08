@@ -1,89 +1,51 @@
-# Project Sarathi — Official Framework Changelog
+# CHANGELOG — PROJECT SARATHI
 
-All notable changes to Project Sarathi are documented in this file.
-
----
-
-## [1.7.0] - 2026-08-08
-
-### Autonomous AI Agent System & LLM Tool Call Binding Engine
-- **Tag**: `v1.7.0-ai-agent-engine`
-- **Test Baseline**: 683 / 683 passed (100% pass rate, 0 failures, 0 warnings).
-- Added `@tool` decorator generating JSON Schema parameter specifications (`properties`, `type`, `required`).
-- Implemented `AIAgent` for binding framework tools and executing structured LLM tool calls (`ToolCall`).
-- Added `tests/test_ai_agent_m53.py`.
+All notable changes, release tags, and architecture milestones for Project Sarathi.
 
 ---
 
-## [1.6.0] - 2026-08-08
-
-### Enterprise Edge Computing & Distributed State Synchronization Engine
-- **Tag**: `v1.6.0-edge-sync`
-- Added `VectorClock` for logical causality tracking and conflict detection.
-- Implemented `DistributedStateSync` with `LAST_WRITE_WINS` and `MERGE_MAPS` conflict resolution policies.
-- Introduced `EdgeWorker` and `EdgeNode` for offline request queueing and sync replay.
-- Added `tests/test_edge_sync_m52.py`.
+## [v2.0.0] - 2026-08-08 — Master Production Release Candidate & General Availability
+### Added
+- **SarathiPlatform v2.0.0 Master Orchestration Engine**: Unified entry point synthesizing Vector RAG, Task DAG Workflows, and AI Agent Swarms (`sarathi.v2_platform.platform.SarathiPlatform`).
+- **Unified Health Probes**: `SystemHealthProbe` for deep liveness and readiness checking across all platform subsystems.
+- **Platform Telemetry & Metrics Reporter**: `PlatformMetricsReporter` calculating $p50, p95, p99$ execution latency, throughput, and error metrics.
+- **Concurrency Stress Test Benchmark Suite**: `PlatformBenchmarkSuite` for automated load testing and multi-tenant isolation verification.
 
 ---
 
-## [1.5.0] - 2026-08-08
-
-### Full Platform Consolidation & Orchestrator
-- **Tag**: `v1.5.0-platform-consolidation`
-- Added `SarathiPlatform` master orchestrator initializing and binding all 13 core framework subsystems.
-- Implemented `PlatformHealthReport` aggregating subsystem status (`UP`, `DEGRADED`, `DOWN`).
-- Added `tests/test_platform_m51.py`.
-
----
-
-## [1.4.0] - 2026-08-08
-
-### Enterprise Messaging, Event Sourcing & CQRS Engine
-- **Tag**: `v1.4.0-cqrs-event-sourcing`
-- Added `AggregateRoot` and append-only `EventStore` for stream recording and replay.
-- Implemented `CommandBus` and `QueryBus` for async and sync message dispatching.
-- Added `ProjectionManager` for materialised read-model views.
-- Added `tests/test_cqrs_m50.py`.
+## [v1.9.0-workflow-graph-dag] - 2026-08-08 — Task DAG Engine, Workflow State Machine & Multi-Agent Swarms
+### Added
+- **Task Graph DAG Engine**: `TaskNode`, `TaskDAG`, Kahn's topological sorting algorithm, cycle detection (`DAGCycleError`), and concurrent execution branches (`DAGExecutor`).
+- **Step-Level Resilience & Rollbacks**: Node retry policies, timeout limits, condition predicates, and automated rollback execution handlers.
+- **Distributed Workflow State Machine**: `WorkflowStatus`, `WorkflowState`, transition validations, and checkpoint state serialization.
+- **Multi-Agent Swarm Orchestration**: `AgentSwarmOrchestrator` supporting Sequential, Parallel Consensus, Hierarchical (Supervisor/Worker), and Critic Consensus topologies.
+- **Swarm Blackboard**: Shared multi-agent memory board (`SwarmBlackboard`) for thread-safe state sharing and consensus tracking.
 
 ---
 
-## [1.3.0] - 2026-08-08
-
-### Enterprise Multi-Tenant Architecture & Data Isolation
-- **Tag**: `v1.3.0-multi-tenancy`
-- Added `TenantContext` using thread/coroutine-isolated `contextvars`.
-- Implemented `TenantResolver` resolving tenant identity from HTTP headers (`X-Tenant-ID`), subdomains (`acme.sarathi.io`), or JWT claims.
-- Added `@require_tenant` decorator enforcing active tenant presence.
-- Added `tests/test_multitenancy_m49.py`.
-
----
-
-## [1.2.0] - 2026-08-08
-
-### Cloud-Native Containerization, K8s Operator & Service Mesh Integration
-- **Tag**: `v1.2.0-cloud-native`
-- Added `K8sProbeHandler` (`LivenessProbe`, `ReadinessProbe`, `StartupProbe`).
-- Implemented `SarathiCRDGenerator` producing `SarathiApp` K8s CRD specifications.
-- Added `ServiceMeshContext` for Envoy/Istio sidecar tracing header extraction (`x-request-id`, `x-b3-traceid`, `x-b3-spanid`).
-- Added `tests/test_cloud_native_m48.py`.
+## [v1.8.0-vector-rag-engine] - 2026-08-08 — Vector Database Engine, Semantic Search & RAG Knowledge Pipeline
+### Added
+- **Vector Database Engine**: In-memory `VectorStore` and `FlatVectorIndex` supporting Cosine, Euclidean, Dot Product, and Manhattan distance metrics.
+- **Metadata Filtering Engine**: MongoDB-style query filters (`$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$contains`, `$and`, `$or`, `$not`).
+- **BM25 Lexical Retriever**: BM25Okapi sparse term-frequency algorithm.
+- **Hybrid Search Engine**: Fuses dense vector similarity with sparse BM25 keyword search using Reciprocal Rank Fusion (RRF).
+- **Document Ingestion & Chunking**: `CharacterChunker`, `RecursiveTextChunker`, `SentenceChunker`, and structured `RAGPipeline` context synthesis with citations.
+- **AI Agent Tool Binding**: `RAGTool` and `VectorRAGManager` integrating vector knowledge tools into Sarathi AI Agents.
 
 ---
 
-## [1.1.0] - 2026-08-08
-
-### Enterprise Plugin SDK, LTS Maintenance Engine & Deprecation Lifecycle
-- **Tag**: `v1.1.0-sdk-lts`
-- Added `PluginSDK` and `BasePlugin` for third-party framework extensions with async `on_load`/`on_unload` hooks.
-- Implemented `@deprecated` decorator tracking replacement recommendations and target retirement versions.
-- Added `LTSHealthChecker` and `LTSMaintenancePolicy`.
-- Added `tests/test_sdk_lts_m47.py`.
+## [v1.7.0-ai-agent-engine] - 2026-08-01 — Autonomous AI Agent System & LLM Tool Call Binding
+### Added
+- Autonomous AI Agent framework, tool binding registries, and agent execution runtimes.
 
 ---
 
-## [1.0.0] - 2026-08-08
+## [v1.6.0-edge-sync] - 2026-07-25 — Vector Clocks, State Sync & Edge Workers
+### Added
+- Edge synchronization, vector clock conflict resolution, and distributed edge worker runtimes.
 
-### General Availability (GA) Master Production Release
-- **Tag**: `v1.0.0`
-- Promoted Project Sarathi to General Availability (GA) v1.0.0 production status.
-- Finalized enterprise features across Async Runtime, Background Processing, Scheduler, Resilience, Caching, Telemetry, Security, API Gateway, and Hardening.
-- Added `tests/test_release_v1_0_0.py`.
+---
+
+## [v1.5.0-platform-consolidation] - 2026-07-18 — Master Orchestrator Consolidation
+### Added
+- Core platform orchestration and unified lifecycle hooks.

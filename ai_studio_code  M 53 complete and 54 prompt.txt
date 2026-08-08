@@ -1,0 +1,35 @@
+Continue PROJECT SARATHI from current repository checkout on branch main.
+
+Authoritative Roadmap Document:
+docs/project_sarathi_master_roadmap.html
+
+Current Project State & History:
+- Official Tags Completed:
+  • Milestone 37: v0.8.24-async-runtime (Async Runtime Integration) — 100% COMPLETE
+  • Milestone 38: v0.8.25-background-tasks (Background Task Engine) — 100% COMPLETE
+  • Milestone 39: v0.8.26-scheduled-jobs (Cron Engine & Scheduled Jobs) — 100% COMPLETE
+  • Milestone 40: v0.8.27-resilience-caching (Resilience, Rate Limiting & Distributed Caching) — 100% COMPLETE
+  • Milestone 41: v0.8.28-telemetry-metrics (Telemetry, Observability & Distributed Tracing) — 100% COMPLETE
+  • Milestone 42: v0.8.29-security-auth (Security, Authentication, RBAC & Identity Management) — 100% COMPLETE
+  • Milestone 43: v0.8.30-api-gateway (API Gateway, OpenAPI Contract Engine & Interceptors) — 100% COMPLETE
+  • Milestone 44: v0.8.31-production-hardening (Production Hardening, Graceful Shutdown & Benchmarking) — 100% COMPLETE
+  • Milestone 45: v0.9.0-rc1 (Master Release Candidate 1 Synthesis) — 100% COMPLETE
+  • Milestone 46: v1.0.0 (General Availability Master Production Release) — 100% COMPLETE
+  • Milestone 47: v1.1.0-sdk-lts (Enterprise Plugin SDK & LTS Engine) — 100% COMPLETE
+  • Milestone 48: v1.2.0-cloud-native (Cloud-Native K8s Probes, CRDs & Service Mesh) — 100% COMPLETE
+  • Milestone 49: v1.3.0-multi-tenancy (Multi-Tenant Architecture & Data Isolation) — 100% COMPLETE
+  • Milestone 50: v1.4.0-cqrs-event-sourcing (CQRS Engine, Event Store & Projections) — 100% COMPLETE
+  • Milestone 51: v1.5.0-platform-consolidation (SarathiPlatform Master Orchestrator) — 100% COMPLETE
+  • Milestone 52: v1.6.0-edge-sync (Vector Clocks, State Sync & Edge Workers) — 100% COMPLETE
+  • Milestone 53: v1.7.0-ai-agent-engine (Autonomous AI Agent System & LLM Tool Call Binding) — 100% COMPLETE
+
+- Test Baseline: 683 passed / 683 total (100% pass rate, 0 failures, 0 warnings).
+- Git Repository Status: Branch main is clean and up to date.
+
+Current Active Milestone: Milestone 54 — Vector Database Engine, Semantic Search & RAG Knowledge Pipeline (Target Tag: v1.8.0-vector-rag-engine)
+
+Working Instructions:
+- Begin Milestone 54 execution immediately.
+- Maintain the 100% test pass rate (683+ tests passing, 0 warnings).
+- Ensure all test functions are written as standard synchronous functions (`def test_...():`) wrapping coroutine calls with `asyncio.run()` to guarantee 100% pass rate without pytest-asyncio plugin dependencies.
+- Provide copy-pasteable PowerShell / Python setup scripts for direct terminal execution.
