@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-__version__ = "0.9.0-rc1"
+__version__ = "1.0.0"
 
 _pkg_dir = Path(__file__).resolve().parent
 _root_dir = str(_pkg_dir.parent.parent if _pkg_dir.parent.name == "src" else _pkg_dir.parent)

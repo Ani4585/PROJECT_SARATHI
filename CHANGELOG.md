@@ -4,11 +4,21 @@ All notable changes to Project Sarathi are documented in this file.
 
 ---
 
+## [1.0.0] - 2026-08-08
+
+### General Availability (GA) Master Production Release
+- **Tag**: `v1.0.0`
+- **Test Baseline**: 665 / 665 passed (100% pass rate, 0 failures, 0 warnings).
+- Promoted Project Sarathi to General Availability (GA) v1.0.0 production status.
+- Finalized enterprise features across Async Runtime, Background Processing, Scheduler, Resilience, Caching, Telemetry, Security, API Gateway, and Hardening.
+- Added `tests/test_release_v1_0_0.py` master GA test suite.
+
+---
+
 ## [0.9.0-rc1] - 2026-08-08
 
-### Master Release Synthesis
+### Master Release Candidate 1
 - **Tag**: `v0.9.0-rc1`
-- **Test Baseline**: 658 / 658 passed (100% pass rate, 0 failures, 0 warnings).
 - Synthesized framework features across Milestones 37 through 45 into Master Release Candidate 1.
 - Added `tests/test_release_v0_9_0.py` master integration verification suite.
 
@@ -21,7 +31,6 @@ All notable changes to Project Sarathi are documented in this file.
 - Added `HardeningAuditor` & `HardeningReport` for system readiness verification.
 - Implemented `ShutdownManager` with coroutine draining and signal handling.
 - Introduced `ProductionBenchmarkSuite` for latency percentile calculations (`p50`, `p95`, `avg` ms).
-- Added `tests/test_hardening_m44.py`.
 
 ---
 
@@ -32,7 +41,6 @@ All notable changes to Project Sarathi are documented in this file.
 - Added `GatewayRouter` with dynamic path parameter extraction (`/path/{id}`).
 - Implemented interceptor pipeline (`GatewayInterceptor`, `CORSInterceptor`, `LoggingInterceptor`, `AuthInterceptor`).
 - Integrated `OpenAPIGenerator` producing valid OpenAPI 3.1.0 specifications.
-- Added `tests/test_gateway_m43.py`.
 
 ---
 
@@ -43,7 +51,6 @@ All notable changes to Project Sarathi are documented in this file.
 - Implemented HMAC SHA-256 `JWTManager` for token encoding, decoding, signature verification, and expiration enforcement.
 - Added PBKDF2 `PasswordHasher` and `constant_time_compare` timing-attack protection.
 - Created `UserIdentity` containers and `@require_auth`, `@require_role`, `@require_permission` decorators.
-- Added `tests/test_security_m42.py`.
 
 ---
 
@@ -54,7 +61,6 @@ All notable changes to Project Sarathi are documented in this file.
 - Added `Counter`, `Gauge`, and `Histogram` metrics.
 - Built `PrometheusExporter` rendering metrics in standard Prometheus exposition format.
 - Added distributed tracing with W3C Trace Context propagation (`traceparent`).
-- Added `tests/test_telemetry_m41.py`.
 
 ---
 
@@ -65,7 +71,6 @@ All notable changes to Project Sarathi are documented in this file.
 - Implemented `CircuitBreaker`, `@retry` with exponential jitter backoff, and `@bulkhead` concurrency limiters.
 - Added `TokenBucket`, `SlidingWindowCounter`, and `LeakyBucket` rate limiters.
 - Built `TwoLevelCache` (L1 Local Memory + L2 Distributed Store) with SingleFlight stampede protection.
-- Added `tests/test_resilience_m40.py`.
 
 ---
 
@@ -75,7 +80,6 @@ All notable changes to Project Sarathi are documented in this file.
 - **Tag**: `v0.8.26-scheduled-jobs`
 - Added `CronExpression` parser (5 and 6 field support).
 - Built `ScheduledJob` lifecycle engine and `DistributedLeaseLock`.
-- Added `tests/test_scheduler_m39.py`.
 
 ---
 
@@ -84,7 +88,6 @@ All notable changes to Project Sarathi are documented in this file.
 ### Background Task Engine
 - **Tag**: `v0.8.25-background-tasks`
 - Added asynchronous task queueing, worker pools, and execution tracking.
-- Added `tests/test_m38_pack1.py`, `tests/test_m38_pack2.py`.
 
 ---
 
@@ -93,4 +96,3 @@ All notable changes to Project Sarathi are documented in this file.
 ### Async Runtime Integration
 - **Tag**: `v0.8.24-async-runtime`
 - Built core `AsyncService` protocols, cancellation tokens, thread boundaries, and timeout safeguards.
-- Added `tests/test_async_runtime.py`, `tests/test_m37_pack2.py`.
