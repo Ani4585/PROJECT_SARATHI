@@ -1,4 +1,4 @@
-"""Cache-aside loading with per-key stampede protection."""
+﻿"""Cache-aside loading with per-key stampede protection."""
 
 from __future__ import annotations
 

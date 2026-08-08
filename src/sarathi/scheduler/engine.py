@@ -1,4 +1,5 @@
 ﻿import asyncio
+import inspect
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Optional
@@ -55,7 +56,7 @@ class AsyncSchedulerEngine:
             job.last_run_at = now
             job.run_count += 1
             
-            if asyncio.iscoroutinefunction(job.func):
+            if inspect.iscoroutinefunction(job.func):
                 await job.func(*job.args, **job.kwargs)
             elif job.func:
                 job.func(*job.args, **job.kwargs)

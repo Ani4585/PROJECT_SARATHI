@@ -1,4 +1,4 @@
-"""Thread-safe in-memory cache backend with TTL and bounded eviction."""
+﻿"""Thread-safe in-memory cache backend with TTL and bounded eviction."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Collision-free cache namespaces."""
+﻿"""Collision-free cache namespaces."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Stable cache backend contract."""
+﻿"""Stable cache backend contract."""
 
 from __future__ import annotations
 
