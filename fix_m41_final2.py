@@ -1,6 +1,16 @@
 import sys
 from pathlib import Path
 
+def write_file(path_str: str, content: str):
+    p = Path(path_str)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(content.strip() + "\n", encoding="utf-8")
+    print(f"[UPDATED] {path_str}")
+
+SARATHI_INIT = '''
+import sys
+from pathlib import Path
+
 _pkg_dir = Path(__file__).resolve().parent
 _root_dir = str(_pkg_dir.parent.parent if _pkg_dir.parent.name == "src" else _pkg_dir.parent)
 if _root_dir not in sys.path:
@@ -24,5 +34,9 @@ __all__ = [
     "resilience",
     "telemetry",
 ]
+'''
 
-from . import security
+write_file("sarathi/__init__.py", SARATHI_INIT)
+write_file("src/sarathi/__init__.py", SARATHI_INIT)
+
+print("Entry point fix completed!")

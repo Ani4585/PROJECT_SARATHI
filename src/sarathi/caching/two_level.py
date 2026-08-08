@@ -1,4 +1,5 @@
 import asyncio
+import inspect
 import time
 from typing import Any, Callable, Dict, Optional, Tuple
 
@@ -77,7 +78,7 @@ class TwoLevelCache:
 
         if self.l2_backend is not None:
             try:
-                if asyncio.iscoroutinefunction(getattr(self.l2_backend, "get", None)):
+                if inspect.iscoroutinefunction(getattr(self.l2_backend, "get", None)):
                     val = await self.l2_backend.get(key)
                 elif hasattr(self.l2_backend, "get"):
                     val = self.l2_backend.get(key)
@@ -100,7 +101,7 @@ class TwoLevelCache:
         if self.l2_backend is not None:
             try:
                 effective_l2_ttl = ttl if ttl is not None else self.l2_ttl
-                if asyncio.iscoroutinefunction(getattr(self.l2_backend, "set", None)):
+                if inspect.iscoroutinefunction(getattr(self.l2_backend, "set", None)):
                     await self.l2_backend.set(key, value, effective_l2_ttl)
                 elif hasattr(self.l2_backend, "set"):
                     self.l2_backend.set(key, value, effective_l2_ttl)
@@ -116,7 +117,7 @@ class TwoLevelCache:
         self.l1_store.pop(key, None)
         if self.l2_backend is not None:
             try:
-                if asyncio.iscoroutinefunction(getattr(self.l2_backend, "delete", None)):
+                if inspect.iscoroutinefunction(getattr(self.l2_backend, "delete", None)):
                     await self.l2_backend.delete(key)
                 elif hasattr(self.l2_backend, "delete"):
                     self.l2_backend.delete(key)
@@ -141,7 +142,7 @@ class TwoLevelCache:
 
             if self.l2_backend is not None:
                 try:
-                    if asyncio.iscoroutinefunction(getattr(self.l2_backend, "get", None)):
+                    if inspect.iscoroutinefunction(getattr(self.l2_backend, "get", None)):
                         val = await self.l2_backend.get(key)
                     elif hasattr(self.l2_backend, "get"):
                         val = self.l2_backend.get(key)
@@ -154,7 +155,7 @@ class TwoLevelCache:
                     self.metrics["l2_errors"] += 1
 
             self.metrics["loader_calls"] += 1
-            if asyncio.iscoroutinefunction(loader):
+            if inspect.iscoroutinefunction(loader):
                 val = await loader()
             else:
                 val = loader()

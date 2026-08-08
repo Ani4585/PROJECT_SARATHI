@@ -4,7 +4,7 @@ import functools
 import inspect
 import time
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional, Any
 
 _ACTIVE_SPAN: contextvars.ContextVar[Optional['Span']] = contextvars.ContextVar('active_span', default=None)

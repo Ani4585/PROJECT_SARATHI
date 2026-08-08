@@ -2,7 +2,6 @@ import threading
 from typing import Dict, List, Optional, Any
 
 class Counter:
-    """Monotonically increasing counter metric."""
     def __init__(self, name: str, description: str = "", labels: Optional[Dict[str, str]] = None):
         self.name = name
         self.description = description
@@ -17,7 +16,6 @@ class Counter:
             self.value += value
 
 class Gauge:
-    """Metric representing a single value that can arbitrarily go up or down."""
     def __init__(self, name: str, description: str = "", labels: Optional[Dict[str, str]] = None):
         self.name = name
         self.description = description
@@ -38,7 +36,6 @@ class Gauge:
             self.value -= value
 
 class Histogram:
-    """Histogram metric tracking value distributions in configurable upper-bound buckets."""
     def __init__(self, name: str, description: str = "", buckets: Optional[List[float]] = None):
         self.name = name
         self.description = description
@@ -57,7 +54,6 @@ class Histogram:
                     self.bucket_counts[b] += 1
 
 class PrometheusExporter:
-    """Exporter converting registered metrics into standard Prometheus exposition format."""
     def __init__(self):
         self.counters: Dict[str, Counter] = {}
         self.gauges: Dict[str, Gauge] = {}

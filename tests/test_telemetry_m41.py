@@ -11,7 +11,6 @@ from sarathi.telemetry import (
     trace,
 )
 
-# Metrics Tests
 def test_counter_inc():
     c = Counter("test_counter", "Test Description")
     c.inc(5)
@@ -43,7 +42,6 @@ def test_prometheus_exporter_output():
     assert "http_requests_total 10.0" in output
     assert "active_tasks 3.0" in output
 
-# Tracing Tests
 def test_w3c_traceparent_parsing():
     ctx = SpanContext(trace_id="4bf92f3577b34da6a3ce929d0e0e4736", span_id="00f067aa0ba902b7")
     header = ctx.to_traceparent()
@@ -68,16 +66,18 @@ def test_parent_child_span_linkage():
     assert child_span.context.trace_id == root_span.context.trace_id
     assert child_span.parent_span_id == root_span.context.span_id
 
-@pytest.mark.asyncio
-async def test_trace_decorator_async():
-    tracer = Tracer("async_service")
+def test_trace_decorator_async():
+    async def _test():
+        tracer = Tracer("async_service")
 
-    @trace(tracer, "async_operation")
-    async def fetch_data():
-        await asyncio.sleep(0.01)
-        return "data"
+        @trace(tracer, "async_operation")
+        async def fetch_data():
+            await asyncio.sleep(0.01)
+            return "data"
 
-    res = await fetch_data()
-    assert res == "data"
-    assert len(tracer.finished_spans) == 1
-    assert tracer.finished_spans[0].name == "async_operation"
+        res = await fetch_data()
+        assert res == "data"
+        assert len(tracer.finished_spans) == 1
+        assert tracer.finished_spans[0].name == "async_operation"
+
+    asyncio.run(_test())
