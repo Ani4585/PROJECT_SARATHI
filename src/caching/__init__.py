@@ -93,6 +93,18 @@ class InMemoryCache(Generic[K, V]):
         self._writes = 0
         self._deletes = 0
 
+    def _update_entries_metric(self) -> None:
+        if not self.metrics:
+            return
+        labels = {"cache": self.name}
+        try:
+            self.metrics.set_gauge("cache.entries", float(len(self._store)), labels=labels)
+        except Exception:
+            try:
+                self.metrics.gauge("cache.entries", labels=labels).set(float(len(self._store)))
+            except Exception:
+                pass
+
     def _record_metric(self, name: str, amount: float = 1.0) -> None:
         if not self.metrics:
             return
@@ -134,6 +146,7 @@ class InMemoryCache(Generic[K, V]):
             self._record_metric("cache.evictions")
 
         self._store[key] = (value, now, expires_at)
+        self._update_entries_metric()
 
     def get(self, key: K) -> CacheGetResult[V]:
         try:
@@ -168,6 +181,7 @@ class InMemoryCache(Generic[K, V]):
         self._deletes += 1
         if key in self._store:
             del self._store[key]
+            self._update_entries_metric()
             return True
         return False
 
