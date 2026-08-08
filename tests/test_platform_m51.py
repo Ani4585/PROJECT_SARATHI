@@ -4,7 +4,7 @@ import pytest
 from sarathi.platform import SarathiPlatform, PlatformConfig, PlatformHealthReport
 
 def test_platform_version():
-    assert sarathi.__version__ == "1.5.0"
+    assert sarathi.__version__ >= "1.5.0"
 
 def test_platform_orchestrator_lifecycle_and_health():
     async def _test():

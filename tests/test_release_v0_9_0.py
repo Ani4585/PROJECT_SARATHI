@@ -10,7 +10,7 @@ from sarathi.gateway import GatewayRouter, GatewayRequest, CORSInterceptor, Open
 from sarathi.hardening import HardeningAuditor, ShutdownManager, ProductionBenchmarkSuite
 
 def test_version_metadata():
-    assert sarathi.__version__ in ("0.9.0-rc1", "1.0.0", "1.5.0")
+    assert sarathi.__version__ in ("0.9.0-rc1", "1.0.0", "1.5.0", "1.6.0")
 
 def test_master_resilience_and_caching_integration():
     cb = CircuitBreaker(failure_threshold=2)
