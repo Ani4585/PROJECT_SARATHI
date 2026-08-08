@@ -10,18 +10,29 @@ class Chunk:
     end_char: int
     metadata: Dict[str, Any] = field(default_factory=dict)
 
-class CharacterChunker:
+class BaseChunker:
     def __init__(self, chunk_size: int = 500, chunk_overlap: int = 50):
-        self.chunk_size, self.chunk_overlap = chunk_size, chunk_overlap
+        self.chunk_size = chunk_size
+        self.chunk_overlap = chunk_overlap
+
     def chunk_text(self, text: str, metadata: Optional[Dict[str, Any]] = None) -> List[Chunk]:
-        if not text: return []
+        raise NotImplementedError
+
+class CharacterChunker(BaseChunker):
+    def chunk_text(self, text: str, metadata: Optional[Dict[str, Any]] = None) -> List[Chunk]:
+        if not text:
+            return []
         step = self.chunk_size - self.chunk_overlap
         chunks = []
         for idx, start in enumerate(range(0, len(text), step)):
             end = min(start + self.chunk_size, len(text))
             chunks.append(Chunk(text=text[start:end], chunk_index=idx, start_char=start, end_char=end, metadata=(metadata or {}).copy()))
-            if end >= len(text): break
+            if end >= len(text):
+                break
         return chunks
 
-class RecursiveTextChunker(CharacterChunker): pass
-class SentenceChunker(CharacterChunker): pass
+class RecursiveTextChunker(CharacterChunker):
+    pass
+
+class SentenceChunker(CharacterChunker):
+    pass
