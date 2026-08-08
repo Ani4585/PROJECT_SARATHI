@@ -97,16 +97,15 @@ class InMemoryCache(Generic[K, V]):
         if not self.metrics:
             return
         labels = (("cache", self.name),)
-        for attempt in [
-            lambda: self.metrics.counter(name, labels=labels).increment(),
-            lambda: self.metrics.counter(name, labels).increment(),
-            lambda: self.metrics.counter(name, dict(labels)).increment(),
-        ]:
+        try:
+            self.metrics.counter(name, labels=labels).increment()
+        except TypeError:
             try:
-                attempt()
-                break
+                self.metrics.counter(name, labels).increment()
             except Exception:
-                continue
+                pass
+        except Exception:
+            pass
 
     def set(self, key: K, value: V, ttl_seconds: Optional[float] = None) -> None:
         try:
