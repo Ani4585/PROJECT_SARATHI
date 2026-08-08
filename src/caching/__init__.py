@@ -1,6 +1,7 @@
-﻿from typing import Generic, TypeVar, Optional, Dict, Any, Tuple, Callable
+﻿import asyncio
 import time
 from enum import Enum, auto
+from typing import Generic, TypeVar, Optional, Dict, Any, Tuple, Callable
 
 K = TypeVar('K')
 V = TypeVar('V')
@@ -132,3 +133,37 @@ class NamespacedCache(Generic[K, V]):
         for k in matching_keys:
             self.backend.delete(k)
         return len(matching_keys)
+
+class CacheAside(Generic[K, V]):
+    def __init__(self, cache: InMemoryCache[K, V], loader: Callable[[K], Any]):
+        self.cache = cache
+        self.loader = loader
+
+    def get(self, key: K) -> V:
+        res = self.cache.get(key)
+        if res.found:
+            return res.value  # type: ignore
+        val = self.loader(key)
+        self.cache.set(key, val)
+        return val
+
+    async def get_async(self, key: K) -> V:
+        res = self.cache.get(key)
+        if res.found:
+            return res.value  # type: ignore
+        if asyncio.iscoroutinefunction(self.loader):
+            val = await self.loader(key)
+        else:
+            val = self.loader(key)
+        self.cache.set(key, val)
+        return val
+
+__all__ = [
+    "EvictionPolicy",
+    "CachePolicy",
+    "CacheStats",
+    "CacheGetResult",
+    "InMemoryCache",
+    "NamespacedCache",
+    "CacheAside",
+]
