@@ -37,3 +37,5 @@ from . import lts
 from . import cloud
 
 from . import multitenancy
+
+from . import cqrs
