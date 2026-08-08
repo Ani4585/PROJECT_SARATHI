@@ -6,8 +6,16 @@ from typing import Generic, TypeVar, Optional, Dict, Any, Tuple, Callable
 K = TypeVar('K')
 V = TypeVar('V')
 
-class CacheKeyError(KeyError):
-    """Raised when a cache key is invalid or not found."""
+class CacheError(Exception):
+    """Base exception for caching errors."""
+    pass
+
+class CacheKeyError(CacheError, KeyError):
+    """Raised when a cache key is invalid or missing."""
+    pass
+
+class CacheLoadError(CacheError, RuntimeError):
+    """Raised when cache loader fails to produce a value."""
     pass
 
 class EvictionPolicy(Enum):
@@ -57,7 +65,7 @@ class InMemoryCache(Generic[K, V]):
         now = self.clock()
         expires_at = now + effective_ttl if effective_ttl else None
         
-        # Purge expired entries
+        # Purge expired
         expired_keys = [k for k, (_, _, exp) in list(self._store.items()) if exp and exp <= now]
         for ek in expired_keys:
             del self._store[ek]
@@ -156,7 +164,10 @@ class CacheAside(Generic[K, V]):
         res = self.cache.get(key)
         if res.found:
             return res.value  # type: ignore
-        val = self.loader(key)
+        try:
+            val = self.loader(key)
+        except Exception as e:
+            raise CacheLoadError(f"Failed to load key {key}") from e
         self.cache.set(key, val)
         return val
 
@@ -164,15 +175,20 @@ class CacheAside(Generic[K, V]):
         res = self.cache.get(key)
         if res.found:
             return res.value  # type: ignore
-        if asyncio.iscoroutinefunction(self.loader):
-            val = await self.loader(key)
-        else:
-            val = self.loader(key)
+        try:
+            if asyncio.iscoroutinefunction(self.loader):
+                val = await self.loader(key)
+            else:
+                val = self.loader(key)
+        except Exception as e:
+            raise CacheLoadError(f"Failed to load key {key}") from e
         self.cache.set(key, val)
         return val
 
 __all__ = [
+    "CacheError",
     "CacheKeyError",
+    "CacheLoadError",
     "EvictionPolicy",
     "CachePolicy",
     "CacheStats",
