@@ -10,8 +10,8 @@ class CacheError(Exception):
     """Base exception for caching errors."""
     pass
 
-class CacheKeyError(CacheError, KeyError):
-    """Raised when a cache key is invalid or missing."""
+class CacheKeyError(CacheError, TypeError, KeyError):
+    """Raised when a cache key is invalid or unhashable."""
     pass
 
 class CacheLoadError(CacheError, RuntimeError):
@@ -23,24 +23,43 @@ class EvictionPolicy(Enum):
     FIFO = auto()
 
 class CachePolicy:
-    def __init__(self, ttl_seconds: Optional[float] = None, max_entries: Optional[int] = None, eviction_policy: Any = EvictionPolicy.LRU):
+    def __init__(
+        self,
+        ttl_seconds: Optional[float] = None,
+        max_entries: Optional[int] = None,
+        eviction: Any = EvictionPolicy.LRU,
+        eviction_policy: Any = None,
+    ):
         if ttl_seconds is not None and ttl_seconds <= 0:
             raise ValueError("TTL seconds must be > 0")
         if max_entries is not None and max_entries <= 0:
             raise ValueError("maximum entries must be > 0")
-        if eviction_policy is not None and not isinstance(eviction_policy, EvictionPolicy):
-            raise TypeError("EvictionPolicy expected")
+        ev = eviction_policy if eviction_policy is not None else eviction
+        if ev is not None and not isinstance(ev, EvictionPolicy):
+            raise TypeError("EvictionPolicy must be an instance of EvictionPolicy")
         self.ttl_seconds = ttl_seconds
         self.max_entries = max_entries
-        self.eviction_policy = eviction_policy
+        self.eviction = ev
+        self.eviction_policy = ev
 
 class CacheStats:
-    def __init__(self, entries: int = 0, hits: int = 0, misses: int = 0, expirations: int = 0, evictions: int = 0):
+    def __init__(
+        self,
+        entries: int = 0,
+        hits: int = 0,
+        misses: int = 0,
+        expirations: int = 0,
+        evictions: int = 0,
+        writes: int = 0,
+        deletes: int = 0,
+    ):
         self.entries = entries
         self.hits = hits
         self.misses = misses
         self.expirations = expirations
         self.evictions = evictions
+        self.writes = writes
+        self.deletes = deletes
 
 class CacheGetResult(Generic[V]):
     def __init__(self, found: bool, value: Optional[V] = None):
@@ -48,7 +67,13 @@ class CacheGetResult(Generic[V]):
         self.value = value
 
 class InMemoryCache(Generic[K, V]):
-    def __init__(self, policy: Optional[CachePolicy] = None, clock: Optional[Callable[[], float]] = None, name: str = "default", metrics: Any = None):
+    def __init__(
+        self,
+        policy: Optional[CachePolicy] = None,
+        clock: Optional[Callable[[], float]] = None,
+        name: str = "default",
+        metrics: Any = None,
+    ):
         self.policy = policy or CachePolicy()
         self.clock = clock or time.time
         self.name = name
@@ -57,15 +82,25 @@ class InMemoryCache(Generic[K, V]):
         self._hits = 0
         self._misses = 0
         self._expirations = 0
+        self._evictions = 0
+        self._writes = 0
+        self._deletes = 0
 
     def set(self, key: K, value: V, ttl_seconds: Optional[float] = None) -> None:
+        try:
+            hash(key)
+        except TypeError as e:
+            raise CacheKeyError(f"Key {key} must be hashable") from e
+
         if ttl_seconds is not None and ttl_seconds <= 0:
             raise ValueError("TTL seconds must be > 0")
         effective_ttl = ttl_seconds if ttl_seconds is not None else self.policy.ttl_seconds
         now = self.clock()
         expires_at = now + effective_ttl if effective_ttl else None
         
-        # Purge expired
+        self._writes += 1
+
+        # Purge expired entries
         expired_keys = [k for k, (_, _, exp) in list(self._store.items()) if exp and exp <= now]
         for ek in expired_keys:
             del self._store[ek]
@@ -75,10 +110,16 @@ class InMemoryCache(Generic[K, V]):
         if self.policy.max_entries and len(self._store) >= self.policy.max_entries and key not in self._store:
             first_key = next(iter(self._store))
             del self._store[first_key]
+            self._evictions += 1
 
         self._store[key] = (value, now, expires_at)
 
     def get(self, key: K) -> CacheGetResult[V]:
+        try:
+            hash(key)
+        except TypeError as e:
+            raise CacheKeyError(f"Key {key} must be hashable") from e
+
         now = self.clock()
         labels = (("cache", self.name),)
         if key in self._store:
@@ -93,6 +134,12 @@ class InMemoryCache(Generic[K, V]):
                     except Exception:
                         pass
                 return CacheGetResult(False, None)
+            
+            # LRU touch update
+            if self.policy.eviction == EvictionPolicy.LRU:
+                del self._store[key]
+                self._store[key] = (val, created, expires_at)
+
             self._hits += 1
             if self.metrics:
                 try:
@@ -100,6 +147,7 @@ class InMemoryCache(Generic[K, V]):
                 except Exception:
                     pass
             return CacheGetResult(True, val)
+
         self._misses += 1
         if self.metrics:
             try:
@@ -109,6 +157,7 @@ class InMemoryCache(Generic[K, V]):
         return CacheGetResult(False, None)
 
     def delete(self, key: K) -> bool:
+        self._deletes += 1
         if key in self._store:
             del self._store[key]
             return True
@@ -127,7 +176,10 @@ class InMemoryCache(Generic[K, V]):
             entries=len(self._store),
             hits=self._hits,
             misses=self._misses,
-            expirations=self._expirations
+            expirations=self._expirations,
+            evictions=self._evictions,
+            writes=self._writes,
+            deletes=self._deletes,
         )
 
 class NamespacedCache(Generic[K, V]):
@@ -156,34 +208,56 @@ class NamespacedCache(Generic[K, V]):
         return len(matching_keys)
 
 class CacheAside(Generic[K, V]):
-    def __init__(self, cache: InMemoryCache[K, V], loader: Callable[[K], Any]):
-        self.cache = cache
+    def __init__(self, cache: Optional[InMemoryCache[K, V]] = None, loader: Optional[Callable] = None):
+        self.cache = cache if cache is not None else InMemoryCache()
         self.loader = loader
 
-    def get(self, key: K) -> V:
+    def get(self, key: K, loader: Optional[Callable] = None) -> V:
         res = self.cache.get(key)
         if res.found:
             return res.value  # type: ignore
+        active_loader = loader or self.loader
+        if active_loader is None:
+            raise CacheLoadError("No loader provided")
         try:
-            val = self.loader(key)
+            try:
+                val = active_loader(key)
+            except TypeError:
+                val = active_loader()
         except Exception as e:
+            if isinstance(e, CacheLoadError):
+                raise
             raise CacheLoadError(f"Failed to load key {key}") from e
         self.cache.set(key, val)
         return val
 
-    async def get_async(self, key: K) -> V:
+    async def get_async(self, key: K, loader: Optional[Callable] = None) -> V:
         res = self.cache.get(key)
         if res.found:
             return res.value  # type: ignore
+        active_loader = loader or self.loader
+        if active_loader is None:
+            raise CacheLoadError("No loader provided")
         try:
-            if asyncio.iscoroutinefunction(self.loader):
-                val = await self.loader(key)
+            if asyncio.iscoroutinefunction(active_loader):
+                try:
+                    val = await active_loader(key)
+                except TypeError:
+                    val = await active_loader()
             else:
-                val = self.loader(key)
+                try:
+                    val = active_loader(key)
+                except TypeError:
+                    val = active_loader()
         except Exception as e:
+            if isinstance(e, CacheLoadError):
+                raise
             raise CacheLoadError(f"Failed to load key {key}") from e
         self.cache.set(key, val)
         return val
+
+    async def get_or_set(self, key: K, loader: Optional[Callable] = None) -> V:
+        return await self.get_async(key, loader=loader)
 
 __all__ = [
     "CacheError",
