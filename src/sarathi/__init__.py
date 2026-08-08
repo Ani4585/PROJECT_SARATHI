@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-__version__ = "1.0.0"
+__version__ = "1.5.0"
 
 _pkg_dir = Path(__file__).resolve().parent
 _root_dir = str(_pkg_dir.parent.parent if _pkg_dir.parent.name == "src" else _pkg_dir.parent)
@@ -16,7 +16,7 @@ def main(arguments=None) -> int:
     app = app_factory()
     return app.run(arguments)
 
-from . import caching, ratelimit, resilience, telemetry, security, gateway, hardening
+from . import caching, ratelimit, resilience, telemetry, security, gateway, hardening, sdk, lts, cloud, multitenancy, cqrs, platform
 
 __all__ = [
     "__version__",
@@ -29,13 +29,10 @@ __all__ = [
     "security",
     "gateway",
     "hardening",
+    "sdk",
+    "lts",
+    "cloud",
+    "multitenancy",
+    "cqrs",
+    "platform",
 ]
-
-from . import sdk
-from . import lts
-
-from . import cloud
-
-from . import multitenancy
-
-from . import cqrs

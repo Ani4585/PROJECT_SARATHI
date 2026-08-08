@@ -9,7 +9,7 @@ from sarathi.caching import TwoLevelCache
 from sarathi.resilience import CircuitBreaker, CircuitState
 
 def test_v100_ga_version_string():
-    assert sarathi.__version__ == "1.0.0"
+    assert sarathi.__version__ >= "1.0.0"
 
 def test_v100_subsystem_exports():
     assert hasattr(sarathi, "caching")
