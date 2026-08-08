@@ -1,7 +1,9 @@
 ﻿import asyncio
+import inspect
+import threading
 import time
 from enum import Enum, auto
-from typing import Generic, TypeVar, Optional, Dict, Any, Tuple, Callable
+from typing import Generic, TypeVar, Optional, Dict, Any, Tuple, Callable, Set
 
 K = TypeVar('K')
 V = TypeVar('V')
@@ -15,7 +17,7 @@ class CacheKeyError(CacheError, TypeError, KeyError):
     pass
 
 class CacheLoadError(CacheError, RuntimeError):
-    """Raised when cache loader fails to produce a value."""
+    """Raised when cache loader fails or re-entrant load is detected."""
     pass
 
 class EvictionPolicy(Enum):
@@ -61,6 +63,11 @@ class CacheStats:
         self.writes = writes
         self.deletes = deletes
 
+    @property
+    def hit_rate(self) -> float:
+        total = self.hits + self.misses
+        return self.hits / total if total > 0 else 0.0
+
 class CacheGetResult(Generic[V]):
     def __init__(self, found: bool, value: Optional[V] = None):
         self.found = found
@@ -99,6 +106,7 @@ class InMemoryCache(Generic[K, V]):
         expires_at = now + effective_ttl if effective_ttl else None
         
         self._writes += 1
+        labels = (("cache", self.name),)
 
         # Purge expired entries
         expired_keys = [k for k, (_, _, exp) in list(self._store.items()) if exp and exp <= now]
@@ -111,8 +119,18 @@ class InMemoryCache(Generic[K, V]):
             first_key = next(iter(self._store))
             del self._store[first_key]
             self._evictions += 1
+            if self.metrics:
+                try:
+                    self.metrics.counter("cache.evictions", labels=labels).increment()
+                except Exception:
+                    pass
 
         self._store[key] = (value, now, expires_at)
+        if self.metrics:
+            try:
+                self.metrics.counter("cache.writes", labels=labels).increment()
+            except Exception:
+                pass
 
     def get(self, key: K) -> CacheGetResult[V]:
         try:
@@ -135,7 +153,7 @@ class InMemoryCache(Generic[K, V]):
                         pass
                 return CacheGetResult(False, None)
             
-            # LRU touch update
+            # LRU re-ordering
             if self.policy.eviction == EvictionPolicy.LRU:
                 del self._store[key]
                 self._store[key] = (val, created, expires_at)
@@ -211,48 +229,75 @@ class CacheAside(Generic[K, V]):
     def __init__(self, cache: Optional[InMemoryCache[K, V]] = None, loader: Optional[Callable] = None):
         self.cache = cache if cache is not None else InMemoryCache()
         self.loader = loader
+        self._key_locks: Dict[Any, threading.Lock] = {}
+        self._locks_lock = threading.Lock()
+        self._in_flight = threading.local()
 
-    def get(self, key: K, loader: Optional[Callable] = None) -> V:
+    def _get_key_lock(self, key: Any) -> threading.Lock:
+        with self._locks_lock:
+            if key not in self._key_locks:
+                self._key_locks[key] = threading.Lock()
+            return self._key_locks[key]
+
+    def get_or_load(self, key: K, loader: Optional[Callable] = None) -> V:
         res = self.cache.get(key)
         if res.found:
             return res.value  # type: ignore
+
+        if not hasattr(self._in_flight, "keys"):
+            self._in_flight.keys = set()
+        if key in self._in_flight.keys:
+            raise CacheLoadError(f"Re-entrant load detected for key '{key}'")
+
         active_loader = loader or self.loader
         if active_loader is None:
             raise CacheLoadError("No loader provided")
-        try:
+
+        key_lock = self._get_key_lock(key)
+        with key_lock:
+            res = self.cache.get(key)
+            if res.found:
+                return res.value  # type: ignore
+
+            self._in_flight.keys.add(key)
             try:
-                val = active_loader(key)
-            except TypeError:
-                val = active_loader()
-        except Exception as e:
-            if isinstance(e, CacheLoadError):
-                raise
-            raise CacheLoadError(f"Failed to load key {key}") from e
-        self.cache.set(key, val)
-        return val
+                try:
+                    val = active_loader(key)
+                except TypeError:
+                    val = active_loader()
+            except Exception as e:
+                if isinstance(e, CacheLoadError):
+                    raise
+                raise CacheLoadError(str(e)) from e
+            finally:
+                self._in_flight.keys.remove(key)
+
+            self.cache.set(key, val)
+            return val
+
+    def get(self, key: K, loader: Optional[Callable] = None) -> V:
+        return self.get_or_load(key, loader)
 
     async def get_async(self, key: K, loader: Optional[Callable] = None) -> V:
         res = self.cache.get(key)
         if res.found:
             return res.value  # type: ignore
+
         active_loader = loader or self.loader
         if active_loader is None:
             raise CacheLoadError("No loader provided")
-        try:
-            if asyncio.iscoroutinefunction(active_loader):
-                try:
-                    val = await active_loader(key)
-                except TypeError:
-                    val = await active_loader()
-            else:
-                try:
-                    val = active_loader(key)
-                except TypeError:
-                    val = active_loader()
-        except Exception as e:
-            if isinstance(e, CacheLoadError):
-                raise
-            raise CacheLoadError(f"Failed to load key {key}") from e
+
+        if inspect.iscoroutinefunction(active_loader):
+            try:
+                val = await active_loader(key)
+            except TypeError:
+                val = await active_loader()
+        else:
+            try:
+                val = active_loader(key)
+            except TypeError:
+                val = active_loader()
+
         self.cache.set(key, val)
         return val
 
