@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
 
+__version__ = "0.9.0-rc1"
+
 _pkg_dir = Path(__file__).resolve().parent
 _root_dir = str(_pkg_dir.parent.parent if _pkg_dir.parent.name == "src" else _pkg_dir.parent)
 if _root_dir not in sys.path:
@@ -14,19 +16,17 @@ def main(arguments=None) -> int:
     app = app_factory()
     return app.run(arguments)
 
-from . import caching, ratelimit, resilience, telemetry
+from . import caching, ratelimit, resilience, telemetry, security, gateway, hardening
 
 __all__ = [
+    "__version__",
     "create_cli_application",
     "main",
     "caching",
     "ratelimit",
     "resilience",
     "telemetry",
+    "security",
+    "gateway",
+    "hardening",
 ]
-
-from . import security
-
-from . import gateway
-
-from . import hardening
