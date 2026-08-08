@@ -93,6 +93,21 @@ class InMemoryCache(Generic[K, V]):
         self._writes = 0
         self._deletes = 0
 
+    def _record_metric(self, name: str) -> None:
+        if not self.metrics:
+            return
+        labels = (("cache", self.name),)
+        for attempt in [
+            lambda: self.metrics.counter(name, labels=labels).increment(),
+            lambda: self.metrics.counter(name, labels).increment(),
+            lambda: self.metrics.counter(name, dict(labels)).increment(),
+        ]:
+            try:
+                attempt()
+                break
+            except Exception:
+                continue
+
     def set(self, key: K, value: V, ttl_seconds: Optional[float] = None) -> None:
         try:
             hash(key)
@@ -106,7 +121,7 @@ class InMemoryCache(Generic[K, V]):
         expires_at = now + effective_ttl if effective_ttl else None
         
         self._writes += 1
-        labels = (("cache", self.name),)
+        self._record_metric("cache.writes")
 
         # Purge expired entries
         expired_keys = [k for k, (_, _, exp) in list(self._store.items()) if exp and exp <= now]
@@ -119,18 +134,9 @@ class InMemoryCache(Generic[K, V]):
             first_key = next(iter(self._store))
             del self._store[first_key]
             self._evictions += 1
-            if self.metrics:
-                try:
-                    self.metrics.counter("cache.evictions", labels=labels).increment()
-                except Exception:
-                    pass
+            self._record_metric("cache.evictions")
 
         self._store[key] = (value, now, expires_at)
-        if self.metrics:
-            try:
-                self.metrics.counter("cache.writes", labels=labels).increment()
-            except Exception:
-                pass
 
     def get(self, key: K) -> CacheGetResult[V]:
         try:
@@ -139,18 +145,13 @@ class InMemoryCache(Generic[K, V]):
             raise CacheKeyError(f"Key {key} must be hashable") from e
 
         now = self.clock()
-        labels = (("cache", self.name),)
         if key in self._store:
             val, created, expires_at = self._store[key]
             if expires_at and expires_at <= now:
                 del self._store[key]
                 self._expirations += 1
                 self._misses += 1
-                if self.metrics:
-                    try:
-                        self.metrics.counter("cache.misses", labels=labels).increment()
-                    except Exception:
-                        pass
+                self._record_metric("cache.misses")
                 return CacheGetResult(False, None)
             
             # LRU re-ordering
@@ -159,19 +160,11 @@ class InMemoryCache(Generic[K, V]):
                 self._store[key] = (val, created, expires_at)
 
             self._hits += 1
-            if self.metrics:
-                try:
-                    self.metrics.counter("cache.hits", labels=labels).increment()
-                except Exception:
-                    pass
+            self._record_metric("cache.hits")
             return CacheGetResult(True, val)
 
         self._misses += 1
-        if self.metrics:
-            try:
-                self.metrics.counter("cache.misses", labels=labels).increment()
-            except Exception:
-                pass
+        self._record_metric("cache.misses")
         return CacheGetResult(False, None)
 
     def delete(self, key: K) -> bool:
