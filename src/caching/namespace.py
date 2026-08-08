@@ -1,90 +1,30 @@
-﻿"""Collision-free cache namespaces."""
+﻿from typing import Generic, TypeVar, Any, Tuple
+from .memory import InMemoryCache, CacheGetResult
 
-from __future__ import annotations
-
-from collections.abc import Callable, Hashable
-from dataclasses import dataclass
-from typing import Generic, TypeVar, cast
-
-from src.observability.contracts import MetricRecorder
-
-from .aside import CacheAside
-from .contracts import CacheBackend
-from .model import CacheLookup, CacheStats
-
-
-K = TypeVar("K", bound=Hashable)
-V = TypeVar("V")
-
-
-@dataclass(frozen=True, slots=True)
-class _NamespacedKey(Generic[K]):
-    namespace: str
-    key: K
-
+K = TypeVar('K')
+V = TypeVar('V')
 
 class NamespacedCache(Generic[K, V]):
-    def __init__(
-        self,
-        backend: CacheBackend[Hashable, V],
-        namespace: str,
-        *,
-        metrics: MetricRecorder | None = None,
-    ) -> None:
-        normalized = namespace.strip()
-        if not normalized:
-            raise ValueError("Cache namespace must not be blank.")
-        self._backend = backend
-        self._namespace = normalized
-        self._aside: CacheAside[Hashable, V] = CacheAside(
-            backend,
-            metrics=metrics,
-            name=normalized,
-        )
+    def __init__(self, backend: InMemoryCache[Any, V], namespace: str):
+        self.backend = backend
+        self.namespace = namespace
 
-    @property
-    def namespace(self) -> str:
-        return self._namespace
+    def _make_key(self, key: K) -> str:
+        return f"{self.namespace}:{key}"
 
-    def get(self, key: K) -> CacheLookup[V]:
-        return self._backend.get(self._key(key))
+    def set(self, key: K, value: V, ttl_seconds: Any = None) -> None:
+        self.backend.set(self._make_key(key), value, ttl_seconds)
 
-    def set(self, key: K, value: V, *, ttl_seconds: float | None = None) -> None:
-        self._backend.set(self._key(key), value, ttl_seconds=ttl_seconds)
+    def get(self, key: K) -> CacheGetResult:
+        return self.backend.get(self._make_key(key))
 
-    def delete(self, key: K) -> bool:
-        return self._backend.delete(self._key(key))
-
-    def get_or_load(
-        self,
-        key: K,
-        loader: Callable[[], V],
-        *,
-        ttl_seconds: float | None = None,
-    ) -> V:
-        return self._aside.get_or_load(
-            self._key(key),
-            loader,
-            ttl_seconds=ttl_seconds,
-        )
+    def keys(self) -> Tuple[K, ...]:
+        prefix = f"{self.namespace}:"
+        return tuple(k[len(prefix):] for k in self.backend.keys() if str(k).startswith(prefix))
 
     def clear(self) -> int:
-        keys = tuple(
-            key
-            for key in self._backend.keys()
-            if isinstance(key, _NamespacedKey) and key.namespace == self._namespace
-        )
-        return sum(self._backend.delete(key) for key in keys)
-
-    def keys(self) -> tuple[K, ...]:
-        return tuple(
-            cast(_NamespacedKey[K], key).key
-            for key in self._backend.keys()
-            if isinstance(key, _NamespacedKey) and key.namespace == self._namespace
-        )
-
-    def stats(self) -> CacheStats:
-        return self._backend.stats()
-
-    def _key(self, key: K) -> _NamespacedKey[K]:
-        return _NamespacedKey(self._namespace, key)
+        prefix = f"{self.namespace}:"
+        matching_keys = [k for k in self.backend.keys() if str(k).startswith(prefix)]
+        for k in matching_keys:
+            self.backend.delete(k)
+        return len(matching_keys)
