@@ -1,10 +1,17 @@
 ﻿import pytest
 import asyncio
 from datetime import datetime, timezone
-from sarathi.scheduler import (
-    CronExpression, ScheduledJob, MisfirePolicy, TaskState,
-    AsyncSchedulerEngine, DistributedLeaseLock
-)
+
+try:
+    from src.sarathi.scheduler import (
+        CronExpression, ScheduledJob, MisfirePolicy, TaskState,
+        AsyncSchedulerEngine, DistributedLeaseLock
+    )
+except ImportError:
+    from sarathi.scheduler import (
+        CronExpression, ScheduledJob, MisfirePolicy, TaskState,
+        AsyncSchedulerEngine, DistributedLeaseLock
+    )
 
 def test_cron_parsing_next_fire():
     cron = CronExpression("*/5 * * * *")
